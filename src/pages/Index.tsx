@@ -36,7 +36,7 @@ const Index = () => {
     const warm = async () => {
       // Limit concurrency to avoid hammering the edge function.
       const queue = [...RECIPES];
-      const workers = Array.from({ length: 6 }, async () => {
+      const workers = Array.from({ length: 20 }, async () => {
         while (!cancelled && queue.length) {
           const r = queue.shift()!;
           try {
