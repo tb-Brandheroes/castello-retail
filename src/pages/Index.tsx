@@ -94,7 +94,10 @@ const Index = () => {
 
   const goResults = () => {
     if (!duration || tags.length < 3) return;
-    setResults(pickRecipes(duration, tags, 3));
+    const picked = pickRecipes(duration, tags, 3);
+    // Prioritize prefetching the 3 selected recipes immediately
+    picked.forEach((r) => prefetchRecipeMeta(qc, r.url));
+    setResults(picked);
     setStep("results");
   };
 
