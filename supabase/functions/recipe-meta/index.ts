@@ -14,9 +14,13 @@ const TTL_MS = 7 * 24 * 60 * 60 * 1000;
 function upscale(u: string): string {
   if (!u) return u;
   return u
+    .replace(/([?&])mode=crop&?/i, "$1")
+    .replace(/([?&])height=\d+&?/i, "$1")
+    .replace(/([?&])format=webp&?/i, "$1")
     .replace(/([?&]width=)\d+/i, "$11600")
     .replace(/([?&]w=)\d+/i, "$11600")
-    .replace(/([?&]quality=)\d+/i, "$190");
+    .replace(/([?&]quality=)\d+/i, "$190")
+    .replace(/[?&]$/, "");
 }
 
 function pickImage(images: unknown): string {
