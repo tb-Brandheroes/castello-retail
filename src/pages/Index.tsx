@@ -84,6 +84,10 @@ const Index = () => {
   }, [qc]);
 
   const reset = () => {
+    if (hasSession() && step !== "detail") {
+      endSessionAbandoned(step);
+    }
+    clearSession();
     setStep("start");
     setDuration(null);
     setTags([]);
@@ -101,13 +105,31 @@ const Index = () => {
     return () => window.clearTimeout(t);
   }, [step]);
 
+  const handleStart = () => {
+    startSession();
+    setStep("duration");
+  };
+
+  const handleDuration = (d: Duration) => {
+    setDuration(d);
+    updateSession({ duration: d, abandoned_step: "duration" });
+    setStep("tags");
+  };
+
   const goResults = () => {
     if (!duration || tags.length < 3) return;
     const picked = pickRecipes(duration, tags, 3);
-    // Prioritize prefetching the 3 selected recipes immediately
     picked.forEach((r) => prefetchRecipeMeta(qc, r.url));
     setResults(picked);
+    updateSession({ tags, abandoned_step: "results" });
+    logShownRecipes(picked.map((r) => r.slug));
     setStep("results");
+  };
+
+  const handlePick = (r: Recipe) => {
+    setSelected(r);
+    logPicked(r.slug);
+    setStep("detail");
   };
 
   return (
