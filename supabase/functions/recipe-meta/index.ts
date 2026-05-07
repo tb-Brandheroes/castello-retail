@@ -11,13 +11,20 @@ type Meta = { name: string; description: string; image: string };
 const cache = new Map<string, { meta: Meta; expires: number }>();
 const TTL_MS = 7 * 24 * 60 * 60 * 1000;
 
+function upscale(u: string): string {
+  if (!u) return u;
+  return u
+    .replace(/([?&]width=)\d+/i, "$11600")
+    .replace(/([?&]w=)\d+/i, "$11600")
+    .replace(/([?&]quality=)\d+/i, "$190");
+}
+
 function pickImage(images: unknown): string {
   if (Array.isArray(images)) {
-    // Prefer a larger image for kiosk display
-    const big = images.find((u) => typeof u === "string" && u.includes("width=400"));
-    return (big as string) || (images[0] as string) || "";
+    const big = images.find((u) => typeof u === "string" && /width=(\d{3,})/i.test(u));
+    return upscale((big as string) || (images[0] as string) || "");
   }
-  return typeof images === "string" ? images : "";
+  return upscale(typeof images === "string" ? images : "");
 }
 
 function extractMeta(html: string): Meta | null {
