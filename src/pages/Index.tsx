@@ -290,8 +290,8 @@ const DetailOverlay = ({ recipe, onClose }: { recipe: Recipe; onClose: () => voi
       >
         <X className="h-7 w-7" />
       </button>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 max-w-6xl w-full max-h-[95vh] bg-card rounded-3xl overflow-hidden shadow-2xl my-auto">
-        <div className="aspect-[4/3] lg:aspect-auto bg-muted overflow-hidden">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 max-w-6xl w-full max-h-[95vh] bg-card rounded-3xl overflow-y-auto shadow-2xl my-auto">
+        <div className="lg:aspect-auto bg-muted overflow-hidden h-[35vh] lg:h-auto">
           {isLoading ? (
             <div className="w-full h-full flex items-center justify-center">
               <Loader2 className="h-10 w-10 animate-spin text-muted-foreground" />
