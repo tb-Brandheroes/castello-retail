@@ -14,7 +14,80 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      recipe_views: {
+        Row: {
+          created_at: string
+          id: string
+          picked: boolean
+          recipe_slug: string
+          session_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          picked?: boolean
+          recipe_slug: string
+          session_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          picked?: boolean
+          recipe_slug?: string
+          session_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recipe_views_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sessions: {
+        Row: {
+          abandoned_step: string | null
+          completed: boolean
+          created_at: string
+          duration: string | null
+          ended_at: string | null
+          id: string
+          location: string | null
+          picked_slug: string | null
+          shown_slugs: string[] | null
+          started_at: string
+          tags: string[] | null
+        }
+        Insert: {
+          abandoned_step?: string | null
+          completed?: boolean
+          created_at?: string
+          duration?: string | null
+          ended_at?: string | null
+          id?: string
+          location?: string | null
+          picked_slug?: string | null
+          shown_slugs?: string[] | null
+          started_at?: string
+          tags?: string[] | null
+        }
+        Update: {
+          abandoned_step?: string | null
+          completed?: boolean
+          created_at?: string
+          duration?: string | null
+          ended_at?: string | null
+          id?: string
+          location?: string | null
+          picked_slug?: string | null
+          shown_slugs?: string[] | null
+          started_at?: string
+          tags?: string[] | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
