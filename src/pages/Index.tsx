@@ -36,7 +36,7 @@ const Index = () => {
     const warm = async () => {
       // Limit concurrency to avoid hammering the edge function.
       const queue = [...RECIPES];
-      const workers = Array.from({ length: 6 }, async () => {
+      const workers = Array.from({ length: 20 }, async () => {
         while (!cancelled && queue.length) {
           const r = queue.shift()!;
           try {
@@ -94,7 +94,10 @@ const Index = () => {
 
   const goResults = () => {
     if (!duration || tags.length < 3) return;
-    setResults(pickRecipes(duration, tags, 3));
+    const picked = pickRecipes(duration, tags, 3);
+    // Prioritize prefetching the 3 selected recipes immediately
+    picked.forEach((r) => prefetchRecipeMeta(qc, r.url));
+    setResults(picked);
     setStep("results");
   };
 
