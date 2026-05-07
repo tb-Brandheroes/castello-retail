@@ -23,11 +23,56 @@ const IDLE_MS = 60_000;
 const DETAIL_AUTOCLOSE_MS = 30_000;
 
 const Index = () => {
+  const qc = useQueryClient();
   const [step, setStep] = useState<Step>("start");
   const [duration, setDuration] = useState<Duration | null>(null);
   const [tags, setTags] = useState<Tag[]>([]);
   const [results, setResults] = useState<Recipe[]>([]);
   const [selected, setSelected] = useState<Recipe | null>(null);
+
+  // Prefetch all recipe metadata + preload images on mount, so cards render instantly.
+  useEffect(() => {
+    let cancelled = false;
+    const warm = async () => {
+      // Limit concurrency to avoid hammering the edge function.
+      const queue = [...RECIPES];
+      const workers = Array.from({ length: 6 }, async () => {
+        while (!cancelled && queue.length) {
+          const r = queue.shift()!;
+          try {
+            const meta = await qc.fetchQuery({
+              queryKey: ["recipe-meta", r.url],
+              queryFn: async () => {
+                const res = await fetch(
+                  `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/recipe-meta?url=${encodeURIComponent(r.url)}`,
+                  {
+                    headers: {
+                      Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+                      apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+                    },
+                  },
+                );
+                if (!res.ok) throw new Error(String(res.status));
+                return (await res.json()) as RecipeMeta;
+              },
+              staleTime: 1000 * 60 * 60 * 24,
+            });
+            if (meta?.image) {
+              const img = new Image();
+              img.src = meta.image;
+            }
+          } catch {
+            // ignore individual failures
+          }
+        }
+      });
+      await Promise.all(workers);
+    };
+    warm();
+    return () => {
+      cancelled = true;
+    };
+  }, [qc]);
 
   const reset = () => {
     setStep("start");
