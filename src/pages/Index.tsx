@@ -103,7 +103,7 @@ const Index = () => {
         )}
 
         {step === "detail" && selected && (
-          <DetailOverlay recipe={selected} onClose={reset} />
+          <DetailOverlay recipe={selected} onClose={() => setStep("results")} />
         )}
 
         <footer className="text-center mt-auto pt-8">
