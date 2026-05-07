@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, type QueryClient } from "@tanstack/react-query";
 
 export type RecipeMeta = { name: string; description: string; image: string };
 
@@ -15,12 +15,22 @@ async function fetchMeta(url: string): Promise<RecipeMeta> {
   return res.json();
 }
 
+export function recipeMetaQuery(url: string) {
+  return {
+    queryKey: ["recipe-meta", url],
+    queryFn: () => fetchMeta(url),
+    staleTime: 1000 * 60 * 60 * 24,
+  };
+}
+
+export function prefetchRecipeMeta(qc: QueryClient, url: string) {
+  return qc.prefetchQuery(recipeMetaQuery(url));
+}
+
 export function useRecipeMeta(url: string | null) {
   return useQuery({
-    queryKey: ["recipe-meta", url],
-    queryFn: () => fetchMeta(url!),
+    ...recipeMetaQuery(url ?? ""),
     enabled: !!url,
-    staleTime: 1000 * 60 * 60 * 24,
     retry: 1,
   });
 }
