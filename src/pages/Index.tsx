@@ -270,8 +270,8 @@ const RecipeCard = ({ recipe, onPick }: { recipe: Recipe; onPick: () => void }) 
           <div className="text-muted-foreground text-sm">Billede ikke tilgængeligt</div>
         )}
       </div>
-      <div className="p-4 min-h-[5rem] flex items-center">
-        <h3 className="text-lg font-semibold text-foreground leading-snug">
+      <div className="p-3 md:p-4 min-h-[4rem] flex items-center">
+        <h3 className="text-sm md:text-base lg:text-lg font-semibold text-foreground leading-snug line-clamp-3">
           {data?.name ?? "Indlæser…"}
         </h3>
       </div>
