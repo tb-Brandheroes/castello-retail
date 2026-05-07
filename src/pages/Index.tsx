@@ -147,17 +147,10 @@ const Index = () => {
         }}
       />
       <main className="flex-1 container mx-auto px-6 pt-12 pb-8 max-w-5xl relative z-10 flex flex-col">
-        {step === "start" && <StartScreen onStart={() => setStep("duration")} />}
+        {step === "start" && <StartScreen onStart={handleStart} />}
 
         {step === "duration" && (
-          <DurationScreen
-            value={duration}
-            onSelect={(d) => {
-              setDuration(d);
-              setStep("tags");
-            }}
-            onBack={reset}
-          />
+          <DurationScreen value={duration} onSelect={handleDuration} onBack={reset} />
         )}
 
         {step === "tags" && (
@@ -174,10 +167,7 @@ const Index = () => {
         {step === "results" && (
           <ResultsScreen
             recipes={results}
-            onPick={(r) => {
-              setSelected(r);
-              setStep("detail");
-            }}
+            onPick={handlePick}
             onBack={() => setStep("tags")}
             onRestart={reset}
           />
