@@ -16,6 +16,15 @@ import {
 } from "@/data/recipes";
 import { useRecipeMeta, prefetchRecipeMeta, type RecipeMeta } from "@/hooks/useRecipeMeta";
 import { useIdleReset } from "@/hooks/useIdleReset";
+import {
+  startSession,
+  updateSession,
+  logShownRecipes,
+  logPicked,
+  endSessionAbandoned,
+  clearSession,
+  hasSession,
+} from "@/lib/analytics";
 
 type Step = "start" | "duration" | "tags" | "results" | "detail";
 
