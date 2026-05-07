@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { QRCodeSVG } from "qrcode.react";
 import { Loader2, X, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -6,13 +7,14 @@ import { cn } from "@/lib/utils";
 import {
   ALL_TAGS,
   DURATION_LABELS,
+  RECIPES,
   TAG_LABELS,
   pickRecipes,
   type Duration,
   type Recipe,
   type Tag,
 } from "@/data/recipes";
-import { useRecipeMeta } from "@/hooks/useRecipeMeta";
+import { useRecipeMeta, prefetchRecipeMeta, type RecipeMeta } from "@/hooks/useRecipeMeta";
 import { useIdleReset } from "@/hooks/useIdleReset";
 
 type Step = "start" | "duration" | "tags" | "results" | "detail";
