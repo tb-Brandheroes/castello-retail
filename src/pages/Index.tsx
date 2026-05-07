@@ -130,7 +130,7 @@ const StartScreen = ({ onStart }: { onStart: () => void }) => (
       Klik dig frem til dit næste måltid
     </h1>
     <p className="text-white/90 text-xl max-w-xl">
-      Vælg tid og præferencer — og lad Castello inspirere dig til aftensmaden.
+      Vælg tid og præferencer - og lad Castello inspirere dig til aftensmaden.
     </p>
     <Button
       onClick={onStart}
