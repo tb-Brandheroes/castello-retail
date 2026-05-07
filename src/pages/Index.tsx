@@ -16,6 +16,15 @@ import {
 } from "@/data/recipes";
 import { useRecipeMeta, prefetchRecipeMeta, type RecipeMeta } from "@/hooks/useRecipeMeta";
 import { useIdleReset } from "@/hooks/useIdleReset";
+import {
+  startSession,
+  updateSession,
+  logShownRecipes,
+  logPicked,
+  endSessionAbandoned,
+  clearSession,
+  hasSession,
+} from "@/lib/analytics";
 
 type Step = "start" | "duration" | "tags" | "results" | "detail";
 
@@ -75,6 +84,10 @@ const Index = () => {
   }, [qc]);
 
   const reset = () => {
+    if (hasSession() && step !== "detail") {
+      endSessionAbandoned(step);
+    }
+    clearSession();
     setStep("start");
     setDuration(null);
     setTags([]);
@@ -92,13 +105,31 @@ const Index = () => {
     return () => window.clearTimeout(t);
   }, [step]);
 
+  const handleStart = () => {
+    startSession();
+    setStep("duration");
+  };
+
+  const handleDuration = (d: Duration) => {
+    setDuration(d);
+    updateSession({ duration: d, abandoned_step: "duration" });
+    setStep("tags");
+  };
+
   const goResults = () => {
     if (!duration || tags.length < 3) return;
     const picked = pickRecipes(duration, tags, 3);
-    // Prioritize prefetching the 3 selected recipes immediately
     picked.forEach((r) => prefetchRecipeMeta(qc, r.url));
     setResults(picked);
+    updateSession({ tags, abandoned_step: "results" });
+    logShownRecipes(picked.map((r) => r.slug));
     setStep("results");
+  };
+
+  const handlePick = (r: Recipe) => {
+    setSelected(r);
+    logPicked(r.slug);
+    setStep("detail");
   };
 
   return (
@@ -116,17 +147,10 @@ const Index = () => {
         }}
       />
       <main className="flex-1 container mx-auto px-6 pt-12 pb-8 max-w-5xl relative z-10 flex flex-col">
-        {step === "start" && <StartScreen onStart={() => setStep("duration")} />}
+        {step === "start" && <StartScreen onStart={handleStart} />}
 
         {step === "duration" && (
-          <DurationScreen
-            value={duration}
-            onSelect={(d) => {
-              setDuration(d);
-              setStep("tags");
-            }}
-            onBack={reset}
-          />
+          <DurationScreen value={duration} onSelect={handleDuration} onBack={reset} />
         )}
 
         {step === "tags" && (
@@ -143,10 +167,7 @@ const Index = () => {
         {step === "results" && (
           <ResultsScreen
             recipes={results}
-            onPick={(r) => {
-              setSelected(r);
-              setStep("detail");
-            }}
+            onPick={handlePick}
             onBack={() => setStep("tags")}
             onRestart={reset}
           />
