@@ -270,8 +270,8 @@ const RecipeCard = ({ recipe, onPick }: { recipe: Recipe; onPick: () => void }) 
           <div className="text-muted-foreground text-sm">Billede ikke tilgængeligt</div>
         )}
       </div>
-      <div className="p-4 min-h-[5rem] flex items-center">
-        <h3 className="text-lg font-semibold text-foreground leading-snug">
+      <div className="p-3 md:p-4 min-h-[4rem] flex items-center">
+        <h3 className="text-sm md:text-base lg:text-lg font-semibold text-foreground leading-snug line-clamp-3">
           {data?.name ?? "Indlæser…"}
         </h3>
       </div>
@@ -282,16 +282,16 @@ const RecipeCard = ({ recipe, onPick }: { recipe: Recipe; onPick: () => void }) 
 const DetailOverlay = ({ recipe, onClose }: { recipe: Recipe; onClose: () => void }) => {
   const { data, isLoading } = useRecipeMeta(recipe.url);
   return (
-    <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur-sm flex items-center justify-center p-6 animate-in fade-in duration-300">
+    <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur-sm flex items-center justify-center p-4 md:p-6 animate-in fade-in duration-300 overflow-y-auto">
       <button
         onClick={onClose}
         aria-label="Luk"
-        className="absolute top-6 right-6 h-14 w-14 rounded-full bg-white/90 hover:bg-white text-foreground flex items-center justify-center shadow-lg"
+        className="fixed top-4 right-4 md:top-6 md:right-6 h-14 w-14 rounded-full bg-white/90 hover:bg-white text-foreground flex items-center justify-center shadow-lg z-10"
       >
         <X className="h-7 w-7" />
       </button>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl w-full bg-card rounded-3xl overflow-hidden shadow-2xl">
-        <div className="aspect-square md:aspect-auto bg-muted overflow-hidden">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 max-w-6xl w-full max-h-[95vh] bg-card rounded-3xl overflow-hidden shadow-2xl my-auto">
+        <div className="aspect-[4/3] lg:aspect-auto bg-muted overflow-hidden">
           {isLoading ? (
             <div className="w-full h-full flex items-center justify-center">
               <Loader2 className="h-10 w-10 animate-spin text-muted-foreground" />
@@ -302,21 +302,21 @@ const DetailOverlay = ({ recipe, onClose }: { recipe: Recipe; onClose: () => voi
             )
           )}
         </div>
-        <div className="p-8 md:p-10 flex flex-col gap-6">
-          <h2 className="text-3xl md:text-4xl font-semibold text-foreground leading-tight">
+        <div className="p-6 md:p-8 lg:p-10 flex flex-col gap-5">
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-semibold text-foreground leading-tight">
             {data?.name ?? "Indlæser…"}
           </h2>
           {data?.description && (
-            <p className="text-foreground/80 text-lg leading-relaxed line-clamp-6">
+            <p className="text-foreground/80 text-base md:text-lg leading-relaxed line-clamp-5">
               {data.description}
             </p>
           )}
-          <div className="mt-auto flex items-center gap-6 pt-4">
-            <div className="bg-white p-3 rounded-xl shadow">
-              <QRCodeSVG value={recipe.url} size={160} level="M" includeMargin={false} />
+          <div className="mt-auto flex items-center gap-5 pt-4">
+            <div className="bg-white p-3 rounded-xl shadow shrink-0">
+              <QRCodeSVG value={recipe.url} size={140} level="M" includeMargin={false} />
             </div>
-            <div className="text-foreground">
-              <p className="text-lg font-semibold mb-1">Scan for opskriften</p>
+            <div className="text-foreground min-w-0">
+              <p className="text-base md:text-lg font-semibold mb-1">Scan for opskriften</p>
               <p className="text-sm text-muted-foreground">
                 Find hele opskriften på castellocheese.com
               </p>
