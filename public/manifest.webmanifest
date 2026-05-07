@@ -1,0 +1,23 @@
+{
+  "name": "Being in the Moment - House of Castello",
+  "short_name": "Castello Moments",
+  "description": "Share what makes you be in the moment and receive a personalized recipe crafted by Castello chefs",
+  "start_url": "/",
+  "display": "fullscreen",
+  "background_color": "#ffffff",
+  "theme_color": "#9d6a75",
+  "icons": [
+    {
+      "src": "/icons/icon-180.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
