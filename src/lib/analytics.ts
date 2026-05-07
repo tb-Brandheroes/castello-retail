@@ -30,10 +30,21 @@ export async function startSession() {
   }
 }
 
-export async function updateSession(patch: Record<string, unknown>) {
+type SessionPatch = Partial<{
+  abandoned_step: string | null;
+  completed: boolean;
+  duration: string;
+  ended_at: string;
+  location: string;
+  picked_slug: string;
+  shown_slugs: string[];
+  tags: string[];
+}>;
+
+export async function updateSession(patch: SessionPatch) {
   if (!sessionId) return;
   try {
-    await supabase.from("sessions").update(patch).eq("id", sessionId);
+    await supabase.from("sessions").update(patch as never).eq("id", sessionId);
   } catch (e) {
     console.warn("updateSession failed", e);
   }
