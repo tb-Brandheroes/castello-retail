@@ -52,15 +52,19 @@ const Index = () => {
   };
 
   return (
-    <div
-      className="min-h-screen relative overflow-hidden flex flex-col bg-primary"
-      style={{
-        backgroundImage: "url('/lovable-uploads/8a2e8d91-e3ae-4a6f-aae6-44487632432c.png'), linear-gradient(hsl(var(--primary)), hsl(var(--primary)))",
-        backgroundSize: "cover, cover",
-        backgroundPosition: "center, center",
-        backgroundRepeat: "no-repeat, no-repeat",
-      }}
-    >
+    <div className="min-h-screen relative overflow-hidden flex flex-col bg-primary">
+      <div
+        aria-hidden
+        className="absolute inset-0 z-0 pointer-events-none"
+        style={{
+          backgroundImage: "url('/lovable-uploads/8a2e8d91-e3ae-4a6f-aae6-44487632432c.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          transform: "scale(1.6)",
+          transformOrigin: "center",
+        }}
+      />
       <main className="flex-1 container mx-auto px-6 pt-12 pb-8 max-w-5xl relative z-10 flex flex-col">
         {step === "start" && <StartScreen onStart={() => setStep("duration")} />}
 
