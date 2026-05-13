@@ -247,7 +247,6 @@ const TagsScreen = ({
 }) => {
   const choices: { key: string; label: string; tags: Tag[] }[] = [
     { key: "kød", label: "Kød", tags: ["kød"] },
-    { key: "fisk", label: "Fisk", tags: ["fisk"] },
     { key: "vegetar", label: "Vegetar", tags: ["vegetar"] },
     { key: "surprise", label: "Surprise me", tags: [...ALL_TAGS] },
   ];
