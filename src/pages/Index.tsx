@@ -118,7 +118,7 @@ const Index = () => {
 
   const goResults = () => {
     if (!duration || tags.length < 3) return;
-    const picked = pickRecipes(duration, tags, 3);
+    const picked = pickRecipes(duration, tags, 4);
     picked.forEach((r) => prefetchRecipeMeta(qc, r.url));
     setResults(picked);
     updateSession({ tags, abandoned_step: "results" });
@@ -316,7 +316,7 @@ const ResultsScreen = ({
         </Button>
       </div>
     ) : (
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl">
+      <div className="grid grid-cols-2 gap-6 w-full max-w-3xl">
         {recipes.map((r) => (
           <RecipeCard key={r.slug} recipe={r} onPick={() => onPick(r)} />
         ))}
