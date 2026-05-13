@@ -116,12 +116,13 @@ const Index = () => {
     setStep("tags");
   };
 
-  const goResults = () => {
-    if (!duration || tags.length < 3) return;
-    const picked = pickRecipes(duration, tags, 4);
+  const goResults = (chosenTags: Tag[]) => {
+    if (!duration || chosenTags.length === 0) return;
+    const picked = pickRecipes(duration, chosenTags, 4);
     picked.forEach((r) => prefetchRecipeMeta(qc, r.url));
+    setTags(chosenTags);
     setResults(picked);
-    updateSession({ tags, abandoned_step: "results" });
+    updateSession({ tags: chosenTags, abandoned_step: "results" });
     logShownRecipes(picked.map((r) => r.slug));
     setStep("results");
   };
@@ -154,14 +155,7 @@ const Index = () => {
         )}
 
         {step === "tags" && (
-          <TagsScreen
-            selected={tags}
-            onToggle={(t) =>
-              setTags((prev) => (prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t]))
-            }
-            onContinue={goResults}
-            onBack={() => setStep("duration")}
-          />
+          <TagsScreen onSelect={goResults} onBack={() => setStep("duration")} />
         )}
 
         {step === "results" && (
@@ -245,52 +239,38 @@ const DurationScreen = ({
 );
 
 const TagsScreen = ({
-  selected,
-  onToggle,
-  onContinue,
+  onSelect,
   onBack,
 }: {
-  selected: Tag[];
-  onToggle: (t: Tag) => void;
-  onContinue: () => void;
+  onSelect: (tags: Tag[]) => void;
   onBack: () => void;
-}) => (
-  <div className="flex-1 flex flex-col items-center justify-center gap-8">
-    <BackBar onBack={onBack} />
-    <div className="text-center">
-      <h2 className="text-3xl md:text-4xl font-semibold text-white uppercase tracking-wide drop-shadow">
+}) => {
+  const choices: { key: string; label: string; tags: Tag[] }[] = [
+    { key: "kød", label: "Kød", tags: ["kød"] },
+    { key: "fisk", label: "Fisk", tags: ["fisk"] },
+    { key: "vegetar", label: "Vegetar", tags: ["vegetar"] },
+    { key: "surprise", label: "Surprise me", tags: [...ALL_TAGS] },
+  ];
+  return (
+    <div className="flex-1 flex flex-col items-center justify-center gap-10">
+      <BackBar onBack={onBack} />
+      <h2 className="text-3xl md:text-4xl font-semibold text-white uppercase tracking-wide drop-shadow text-center">
         Måltidet må indeholde
       </h2>
-      <p className="text-white/90 mt-3 text-lg">Vælg minimum 3 ({selected.length} valgt)</p>
-    </div>
-    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 w-full max-w-3xl">
-      {ALL_TAGS.map((t) => {
-        const active = selected.includes(t);
-        return (
+      <div className="grid grid-cols-2 gap-6 w-full max-w-3xl">
+        {choices.map((c) => (
           <button
-            key={t}
-            onClick={() => onToggle(t)}
-            className={cn(
-              "h-20 rounded-xl backdrop-blur-md border-2 transition-all text-lg font-medium",
-              active
-                ? "bg-primary text-white border-primary scale-[1.02]"
-                : "bg-white/60 text-foreground border-white/60 hover:bg-white/80"
-            )}
+            key={c.key}
+            onClick={() => onSelect(c.tags)}
+            className="h-32 rounded-2xl backdrop-blur-md border-2 transition-all text-2xl font-semibold bg-white/60 text-foreground border-white/60 hover:bg-white/80 hover:scale-[1.02]"
           >
-            {TAG_LABELS[t]}
+            {c.label}
           </button>
-        );
-      })}
+        ))}
+      </div>
     </div>
-    <Button
-      onClick={onContinue}
-      disabled={selected.length < 3}
-      className="h-16 px-12 text-lg uppercase tracking-wider rounded-none bg-primary hover:bg-primary/90 text-white disabled:opacity-40"
-    >
-      Vis opskrifter
-    </Button>
-  </div>
-);
+  );
+};
 
 const ResultsScreen = ({
   recipes,
