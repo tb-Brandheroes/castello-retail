@@ -13,6 +13,7 @@ export function StatusBadge() {
     typeof navigator === "undefined" ? true : navigator.onLine !== false,
   );
   const [cacheState, setCacheState] = useState<CacheState>("checking");
+  const [storagePct, setStoragePct] = useState<number | null>(null);
   const [visible, setVisible] = useState(true);
   const tapsRef = useRef<number[]>([]);
   const hideTimer = useRef<number | null>(null);
