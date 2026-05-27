@@ -1,39 +1,69 @@
-## Plan: Bundle fonts lokalt + bekræft offline analytics
+## Plan: 10 robusthedsforbedringer til kiosk use-case
 
-### 1. Google Fonts bundles lokalt
-- Tilføj `@fontsource/cormorant-garamond` (vægte 400, 500, 600, 700) og `@fontsource/montserrat` (vægte 300, 400, 500, 600, 700) som dependencies
-- Importér dem i `src/main.tsx` (eller `src/index.css` via `@import`) så de bundles ind i app'en
-- Fjern `<link>` til `fonts.googleapis.com` og de to `<link rel="preconnect">` i `index.html`
-- Fjern Google Fonts runtime-caching reglerne i `vite.config.ts` (ikke længere relevante)
-- Resultat: nul eksterne netværkskald — appen kører 100% selvstændigt efter første install
+Implementeres i rækkefølge — hver step er selvstændig og kan verificeres før næste.
 
-### 2. Bekræftelse: holder analytics i ugevis offline?
+### Step 1 — ErrorBoundary med auto-reload
+- Ny `src/components/ErrorBoundary.tsx` der fanger React-crashes
+- Viser kort "Genstarter…" overlay og kalder `window.location.reload()` efter 3 sek
+- Logger fejl til console (så Fully Kiosk remote-logs fanger den)
+- Wrappes om `<App />` i `src/main.tsx`
 
-**Ja, det gør den.** Sådan virker det konkret i `src/lib/analytics.ts`:
+### Step 2 — Wake Lock (skærm sover ikke)
+- Ny `src/hooks/useWakeLock.ts` der bruger `navigator.wakeLock.request("screen")`
+- Re-acquirer automatisk på `visibilitychange` (Safari frigiver ved tab-skift)
+- Kaldes én gang i `Index.tsx`
+- Fejler stille på browsere uden support (iOS <16.4)
 
-- Alle events (`startSession`, `updateSession`, `logShownRecipes`, `logPicked`) tjekker `navigator.onLine`. Hvis offline → skrives til `localStorage` under nøglen `castello.analytics.outbox.v1`.
-- `localStorage` er **persistent** i browseren — den overlever:
-  - Browser-restart
-  - Tablet-genstart  
-  - App-genstart i Fully Kiosk
-  - Dage, uger, måneder uden net
-- Køen ryddes kun når events succesfuldt sendes til Supabase, eller hvis nogen manuelt clearer browser-data.
-- Hver offline-session får et midlertidigt `local-<timestamp>-<random>` id. Når nettet kommer tilbage:
-  - `window.addEventListener("online", flushOutbox)` trigger automatisk
-  - `flushOutbox()` indsætter session-rows først, mapper temp-id → rigtigt UUID, og opdaterer derefter session-patches og recipe_views med det rigtige id
-  - Rækkefølgen bevares (FIFO i array)
+### Step 3 — Offline-ready indikator + version-tag
+- Læser `__APP_VERSION__` (injected via Vite `define` fra `package.json` version + git-uafhængigt build-timestamp)
+- Lille diskret badge nederst i hjørnet: `v1.0.0 · ●` (grøn=online, grå=offline+cached, gul=cache ufuldstændig)
+- Tjekker `navigator.serviceWorker.ready` + caches.keys() for at vise "offline ready"
+- Skjules efter 5 sek aktivitet, vises igen ved 3-finger tap (debug-gesture for staff)
 
-**Begrænsninger I bør kende:**
-- `localStorage` har ~5MB grænse pr. origin. Hver event fylder ~200 bytes → plads til ~25.000 events. Med 1 session = ~5 events, kan I køre ~5.000 sessions offline før kø'en bliver fuld. Mere end rigeligt til "uger mellem internet".
-- Hvis personalet rydder browser-data eller geninstallerer Fully Kiosk → kø'en mistes. (Ikke et reelt problem i kiosk-mode med PIN.)
-- `started_at`/`ended_at` timestamps gemmes med tablettens lokale tid på event-tidspunktet, så datoerne i Supabase er korrekte — ikke flush-tidspunktet.
+### Step 4 — Crash- og analytics-backup til IndexedDB
+- Tilføj sekundær persistens i `analytics.ts`: hver `enqueue()` skriver også til IndexedDB (`castello-analytics` db, `outbox` store)
+- Ved opstart: merge IndexedDB-kø ind hvis `localStorage` er tom (recovery efter browser-data clear)
+- ~50MB grænse i stedet for ~5MB
 
-**Lille forbedring jeg tilføjer samtidig:** Også flush når app'en starter op (ikke kun ved `online` event), så hvis nettet allerede er tilbage når tabletten tændes, tømmes kø'en med det samme.
+### Step 5 — Manifest: tilføj `id` felt
+- Tilføj `"id": "/"` til `public/manifest.webmanifest`
+- Sikrer at fremtidige `start_url`-ændringer ikke skaber duplicate installs
+- Ren tilføjelse, ingen breaking change
+
+### Step 6 — Offline-test script
+- Ny `scripts/verify-offline.mjs` der:
+  - Bygger appen (`vite build`)
+  - Starter `vite preview`
+  - Bruger Playwright (allerede ikke installeret — bruger i stedet headless `curl` + asset-tjek)
+  - Verificerer at alle 39 recipe-billeder + fonts + JS/CSS findes i `dist/`
+  - Tjekker at `sw.js` registrerer alle assets i precache-manifest
+- Tilføj `npm run verify:offline` til `package.json`
+
+### Step 7 — QR-fallback: in-app recipe view
+- Ny route `/recipe/:slug` der renderer recipe-detalje fra `recipes-meta.json` lokalt
+- QR-koden viser stadig castellocheese.com URL (kunde scanner med eget net)
+- MEN: hvis kunden ikke kan scanne, kan staff trykke "Vis opskrift her" knap → åbner lokal view
+- Ingen ændringer til selve QR-flowet, kun en ekstra knap på results-skærmen
+
+### Step 8 — Cache-størrelse monitor
+- I debug-badge (step 3): vis også `navigator.storage.estimate()` brug/quota
+- Advarsel hvis >80% af quota brugt
+- Hjælper med at opdage når fremtidige recipe-tilføjelser nærmer sig Safari's grænse
+
+### Step 9 — Timezone-håndtering
+- Tilføj `tz_offset_minutes` til session-row (fra `new Date().getTimezoneOffset()`)
+- Server-side timestamps gemmes som UTC (uændret), men vi kan rekonstruere tablet-lokal tid
+- Migration: `ALTER TABLE sessions ADD COLUMN tz_offset_minutes integer`
+
+### Step 10 — Periodisk flush + health-beacon
+- Udover `online`-event og startup: flush hver 5. minut hvis kø ikke er tom
+- Send tom "heartbeat"-row til Supabase hver time når online (ny `device_heartbeats` tabel)
+- Lar driften se hvilke tablets der er live uden at vente på user-sessions
 
 ### Filer der ændres
-- `package.json` — tilføj `@fontsource/cormorant-garamond`, `@fontsource/montserrat`
-- `src/main.tsx` — importér font-pakker + kald `flushOutbox()` ved opstart
-- `index.html` — fjern Google Fonts `<link>` tags
-- `vite.config.ts` — fjern gfonts runtime-caching regler
+- Nye: `src/components/ErrorBoundary.tsx`, `src/hooks/useWakeLock.ts`, `src/components/StatusBadge.tsx`, `src/pages/RecipeDetail.tsx`, `scripts/verify-offline.mjs`
+- Ændrede: `src/main.tsx`, `src/App.tsx`, `src/pages/Index.tsx`, `src/lib/analytics.ts`, `public/manifest.webmanifest`, `vite.config.ts`, `package.json`
+- Migration: `tz_offset_minutes` kolonne + ny `device_heartbeats` tabel
 
-Det er alt. Ingen ændringer til UI, business logic eller database.
+### Rækkefølge / verificering
+Jeg laver step 1-3 først (de vigtigste — crash recovery, wake lock, version-badge), beder dig teste, og fortsætter derefter med 4-10. Sig til hvis du vil have en anden rækkefølge eller springe nogen over (fx step 7 hvis QR-fallback ikke er nødvendigt).
