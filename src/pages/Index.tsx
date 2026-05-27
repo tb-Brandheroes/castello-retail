@@ -285,7 +285,7 @@ const RecipeCard = ({ recipe, onPick }: { recipe: Recipe; onPick: () => void }) 
   return (
     <button
       onClick={onPick}
-      className="group bg-castello-cream rounded-none overflow-hidden border-2 border-castello-gold/60 hover:border-castello-gold hover:shadow-[0_0_24px_hsl(var(--castello-gold)/0.5)] transition-all text-left flex flex-col"
+      className="group w-full bg-castello-cream rounded-none overflow-hidden border-2 border-castello-gold/60 hover:border-castello-gold hover:shadow-[0_0_24px_hsl(var(--castello-gold)/0.5)] transition-all text-left flex flex-col"
     >
       <div className="aspect-[4/3] bg-castello-plum/10 overflow-hidden flex items-center justify-center">
         {data?.image ? (
@@ -298,8 +298,8 @@ const RecipeCard = ({ recipe, onPick }: { recipe: Recipe; onPick: () => void }) 
           <div className="text-castello-plum/60 text-sm">Billede ikke tilgængeligt</div>
         )}
       </div>
-      <div className="p-3 md:p-4 min-h-[4rem] flex items-center bg-castello-plum">
-        <h3 className="font-serif text-base md:text-lg lg:text-xl font-semibold text-castello-cream leading-snug line-clamp-3">
+      <div className="w-full p-3 md:p-4 min-h-[4rem] flex items-center justify-center bg-castello-plum">
+        <h3 className="font-serif text-base md:text-lg lg:text-xl font-semibold text-castello-cream leading-snug line-clamp-3 text-center w-full">
           {data?.name ?? recipe.slug}
         </h3>
       </div>
