@@ -346,12 +346,6 @@ const DetailOverlay = ({ recipe, onClose }: { recipe: Recipe; onClose: () => voi
                 </p>
               </div>
             </div>
-            <Link
-              to={`/recipe/${recipe.slug}`}
-              className="text-sm text-castello-plum-deep/70 hover:text-castello-plum-deep underline underline-offset-4 self-start"
-            >
-              Eller vis opskriften her på skærmen
-            </Link>
           </div>
         </div>
       </div>
