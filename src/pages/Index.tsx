@@ -398,7 +398,7 @@ const BackBar = ({ onBack }: { onBack: () => void }) => (
   <div className="self-start">
     <button
       onClick={onBack}
-      className="flex items-center gap-2 text-white/90 hover:text-white text-base"
+      className="flex items-center gap-2 text-castello-plum-deep/80 hover:text-castello-plum-deep text-base font-serif tracking-wide uppercase"
     >
       <ArrowLeft className="h-5 w-5" /> Tilbage
     </button>
