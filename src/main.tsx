@@ -3,6 +3,17 @@ import App from './App.tsx'
 import './index.css'
 import { flushOutbox } from './lib/analytics'
 
+// Bundled fonts — no runtime requests to Google Fonts
+import '@fontsource/cormorant-garamond/400.css'
+import '@fontsource/cormorant-garamond/500.css'
+import '@fontsource/cormorant-garamond/600.css'
+import '@fontsource/cormorant-garamond/700.css'
+import '@fontsource/montserrat/300.css'
+import '@fontsource/montserrat/400.css'
+import '@fontsource/montserrat/500.css'
+import '@fontsource/montserrat/600.css'
+import '@fontsource/montserrat/700.css'
+
 createRoot(document.getElementById("root")!).render(<App />);
 
 // --- Service worker registration (production + standalone window only) ---
