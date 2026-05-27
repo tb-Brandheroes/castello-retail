@@ -1,6 +1,7 @@
 {
   "name": "Being in the Moment - House of Castello",
   "short_name": "Castello Moments",
+  "id": "/",
   "description": "Share what makes you be in the moment and receive a personalized recipe crafted by Castello chefs",
   "start_url": "/",
   "display": "fullscreen",
