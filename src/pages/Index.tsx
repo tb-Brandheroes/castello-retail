@@ -285,7 +285,7 @@ const RecipeCard = ({ recipe, onPick }: { recipe: Recipe; onPick: () => void }) 
   return (
     <button
       onClick={onPick}
-      className="group bg-castello-cream rounded-none overflow-hidden border-2 border-castello-gold/60 hover:border-castello-gold hover:shadow-[0_0_24px_hsl(var(--castello-gold)/0.5)] transition-all text-left flex flex-col"
+      className="group w-full bg-castello-cream rounded-none overflow-hidden border-2 border-castello-gold/60 hover:border-castello-gold hover:shadow-[0_0_24px_hsl(var(--castello-gold)/0.5)] transition-all text-left flex flex-col"
     >
       <div className="aspect-[4/3] bg-castello-plum/10 overflow-hidden flex items-center justify-center">
         {data?.image ? (
