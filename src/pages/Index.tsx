@@ -293,13 +293,16 @@ const ResultsScreen = ({
 }) => (
   <div className="flex-1 flex flex-col items-center gap-8 pt-4">
     <BackBar onBack={onBack} />
-    <h2 className="text-3xl md:text-4xl font-semibold text-white uppercase tracking-wide text-center drop-shadow">
-      Vælg din favorit
-    </h2>
+    <div className="flex flex-col items-center gap-4">
+      <h2 className="font-serif text-4xl md:text-5xl font-semibold text-castello-plum-deep uppercase tracking-wide text-center">
+        Vælg din favorit
+      </h2>
+      <div className="h-px w-20 bg-castello-gold" />
+    </div>
     {recipes.length === 0 ? (
-      <div className="text-center text-white space-y-4">
-        <p className="text-xl">Ingen opskrifter matcher dine valg.</p>
-        <Button onClick={onRestart} className="rounded-none">
+      <div className="text-center text-castello-plum-deep space-y-4">
+        <p className="text-xl font-serif">Ingen opskrifter matcher dine valg.</p>
+        <Button onClick={onRestart} className="rounded-none bg-castello-plum hover:bg-castello-plum-deep text-castello-cream border-2 border-castello-gold font-serif uppercase tracking-[0.2em]">
           Prøv igen
         </Button>
       </div>
