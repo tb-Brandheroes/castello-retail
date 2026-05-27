@@ -38,6 +38,10 @@ const Index = () => {
   const [results, setResults] = useState<Recipe[]>([]);
   const [selected, setSelected] = useState<Recipe | null>(null);
 
+  useWakeLock();
+
+
+
 
   const reset = () => {
     if (hasSession() && step !== "detail") {
