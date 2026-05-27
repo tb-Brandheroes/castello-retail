@@ -270,7 +270,10 @@ const TagsScreen = ({
           <button
             key={c.key}
             onClick={() => onSelect(c.tags)}
-            className="h-32 rounded-none border-2 border-castello-gold/60 transition-all text-2xl font-serif font-semibold bg-castello-plum text-castello-cream hover:bg-castello-plum-deep hover:border-castello-gold hover:shadow-[0_0_24px_hsl(var(--castello-gold)/0.5)] tracking-wide"
+            className={cn(
+              "h-32 rounded-none border-2 border-castello-gold/60 transition-all text-2xl font-serif font-semibold bg-castello-plum text-castello-cream hover:bg-castello-plum-deep hover:border-castello-gold hover:shadow-[0_0_24px_hsl(var(--castello-gold)/0.5)] tracking-wide",
+              c.key === "surprise" && "col-span-2"
+            )}
           >
             {c.label}
           </button>
