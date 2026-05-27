@@ -301,7 +301,7 @@ const RecipeCard = ({ recipe, onPick }: { recipe: Recipe; onPick: () => void }) 
 
 
 const DetailOverlay = ({ recipe, onClose }: { recipe: Recipe; onClose: () => void }) => {
-  const { data, isLoading } = useRecipeMeta(recipe.url);
+  const { data } = useRecipeMeta(recipe.url);
   return (
     <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur-sm flex items-center justify-center p-4 md:p-6 animate-in fade-in duration-300 overflow-y-auto">
       <button
@@ -313,14 +313,8 @@ const DetailOverlay = ({ recipe, onClose }: { recipe: Recipe; onClose: () => voi
       </button>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 max-w-6xl w-full max-h-[95vh] bg-card rounded-3xl overflow-y-auto shadow-2xl my-auto">
         <div className="lg:aspect-auto bg-muted overflow-hidden h-[35vh] lg:h-auto">
-          {isLoading ? (
-            <div className="w-full h-full flex items-center justify-center">
-              <Loader2 className="h-10 w-10 animate-spin text-muted-foreground" />
-            </div>
-          ) : (
-            data?.image && (
-              <img src={data.image} alt={data.name} className="w-full h-full object-cover" />
-            )
+          {data?.image && (
+            <img src={data.image} alt={data.name} className="w-full h-full object-cover" />
           )}
         </div>
         <div className="p-6 md:p-8 lg:p-10 flex flex-col gap-5">
