@@ -136,10 +136,10 @@ const Index = () => {
           <img
             src="/lovable-uploads/6ed48fd3-10f2-4811-bcdd-035cfbf810b8.png"
             alt="House of Castello"
-            className="h-28 mx-auto opacity-90"
+            className="h-40 md:h-44 mx-auto opacity-95"
             style={{
               filter:
-                "drop-shadow(0 8px 20px rgba(157, 106, 117, 0.6)) drop-shadow(0 4px 12px rgba(157, 106, 117, 0.4))",
+                "drop-shadow(0 2px 4px rgba(74, 30, 45, 0.35)) drop-shadow(0 1px 2px rgba(74, 30, 45, 0.25))",
             }}
           />
         </footer>
