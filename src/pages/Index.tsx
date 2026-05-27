@@ -132,7 +132,7 @@ const Index = () => {
           <DetailOverlay recipe={selected} onClose={() => setStep("results")} />
         )}
 
-        <footer className="text-center mt-auto pt-8">
+        <footer className="text-center mt-auto pt-8 pb-16 md:pb-24">
           <img
             src="/lovable-uploads/6ed48fd3-10f2-4811-bcdd-035cfbf810b8.png"
             alt="House of Castello"
