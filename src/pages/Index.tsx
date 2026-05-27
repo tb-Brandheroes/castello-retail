@@ -369,7 +369,7 @@ const DetailOverlay = ({ recipe, onClose }: { recipe: Recipe; onClose: () => voi
           )}
         </div>
         <div className="p-6 md:p-8 lg:p-10 flex flex-col gap-5">
-          <h2 className="text-2xl md:text-3xl lg:text-4xl font-semibold text-foreground leading-tight">
+          <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-semibold text-castello-plum-deep leading-tight">
             {data?.name ?? "Indlæser…"}
           </h2>
           {data?.description && (
