@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prefetch-recipes": "node scripts/prefetch-recipes.mjs",
+    "prebuild": "node scripts/prefetch-recipes.mjs",
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
