@@ -1,7 +1,7 @@
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
-import { flushOutbox } from './lib/analytics'
+import { startBackgroundScheduler } from './lib/analytics'
 import { ErrorBoundary } from './components/ErrorBoundary'
 
 
