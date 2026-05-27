@@ -259,15 +259,18 @@ const TagsScreen = ({
   return (
     <div className="flex-1 flex flex-col items-center justify-center gap-10">
       <BackBar onBack={onBack} />
-      <h2 className="text-3xl md:text-4xl font-semibold text-white uppercase tracking-wide drop-shadow text-center">
-        Måltidet må indeholde
-      </h2>
+      <div className="flex flex-col items-center gap-4">
+        <h2 className="font-serif text-4xl md:text-5xl font-semibold text-castello-plum-deep uppercase tracking-wide text-center">
+          Måltidet må indeholde
+        </h2>
+        <div className="h-px w-20 bg-castello-gold" />
+      </div>
       <div className="grid grid-cols-2 gap-6 w-full max-w-3xl">
         {choices.map((c) => (
           <button
             key={c.key}
             onClick={() => onSelect(c.tags)}
-            className="h-32 rounded-2xl backdrop-blur-md border-2 transition-all text-2xl font-semibold bg-white/60 text-foreground border-white/60 hover:bg-white/80 hover:scale-[1.02]"
+            className="h-32 rounded-none border-2 border-castello-gold/60 transition-all text-2xl font-serif font-semibold bg-castello-plum text-castello-cream hover:bg-castello-plum-deep hover:border-castello-gold hover:shadow-[0_0_24px_hsl(var(--castello-gold)/0.5)] tracking-wide"
           >
             {c.label}
           </button>
