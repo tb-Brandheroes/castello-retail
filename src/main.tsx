@@ -30,9 +30,12 @@ const host = window.location.hostname;
 const isPreviewHost =
   host.includes("lovableproject.com") ||
   host.includes("lovable.app") && host.includes("id-preview--");
+// Capacitor injects window.Capacitor when running inside the Android shell.
+// Assets are already on-device, so the SW adds no value and can break capacitor:// routing.
+const isCapacitor =
+  typeof (window as unknown as { Capacitor?: unknown }).Capacitor !== "undefined";
 
-if (isInIframe || isPreviewHost) {
-  // Make sure no stale SW interferes inside the Lovable preview iframe
+if (isInIframe || isPreviewHost || isCapacitor) {
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.getRegistrations().then((rs) => rs.forEach((r) => r.unregister()));
   }
