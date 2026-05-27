@@ -51,6 +51,17 @@ export function StatusBadge() {
           total += (await c.keys()).length;
         }
         if (!cancelled) setCacheState(total > 50 ? "ready" : "partial");
+
+        try {
+          if ("storage" in navigator && navigator.storage?.estimate) {
+            const est = await navigator.storage.estimate();
+            if (est.quota && est.usage && !cancelled) {
+              setStoragePct(Math.round((est.usage / est.quota) * 100));
+            }
+          }
+        } catch {
+          /* ignore */
+        }
       } catch {
         if (!cancelled) setCacheState("partial");
       }
