@@ -36,5 +36,6 @@ if (isInIframe || isPreviewHost) {
     .catch(() => { /* PWA disabled */ });
 }
 
-// Try to flush queued analytics whenever we come back online
+// Flush queued analytics at startup (in case net is already back) and whenever we come online
+flushOutbox();
 window.addEventListener("online", () => { flushOutbox(); });
