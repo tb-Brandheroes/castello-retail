@@ -108,7 +108,7 @@ const Index = () => {
           transformOrigin: "center",
         }}
       />
-      <main className="flex-1 container mx-auto px-6 pt-12 pb-8 max-w-5xl relative z-10 flex flex-col">
+      <main className="flex-1 container mx-auto px-10 pt-16 pb-10 max-w-[1800px] relative z-10 flex flex-col">
         {step === "start" && <StartScreen onStart={handleStart} />}
 
         {step === "duration" && (
@@ -151,18 +151,18 @@ const Index = () => {
 /* ---------------- screens ---------------- */
 
 const StartScreen = ({ onStart }: { onStart: () => void }) => (
-  <div className="flex-1 flex flex-col items-center justify-center text-center gap-10">
-    <div className="text-castello-plum-deep/70 text-xs tracking-[0.4em] font-sans">SINCE 1893</div>
-    <h1 className="font-serif text-5xl md:text-7xl font-semibold text-castello-plum-deep uppercase tracking-wide max-w-3xl leading-tight">
+  <div className="flex-1 flex flex-col items-center justify-center text-center gap-12">
+    <div className="text-castello-plum-deep/70 text-sm tracking-[0.5em] font-sans">SINCE 1893</div>
+    <h1 className="font-serif text-6xl md:text-8xl xl:text-9xl font-semibold text-castello-plum-deep uppercase tracking-wide max-w-5xl leading-[1.05]">
       Klik dig frem til dit næste måltid
     </h1>
-    <div className="h-px w-24 bg-castello-gold" />
-    <p className="text-castello-plum-deep/80 text-xl max-w-xl font-sans">
+    <div className="h-px w-32 bg-castello-gold" />
+    <p className="text-castello-plum-deep/80 text-2xl xl:text-3xl max-w-2xl font-sans">
       Vælg tid og præferencer - og lad Castello inspirere dig til aftensmaden.
     </p>
     <Button
       onClick={onStart}
-      className="h-20 px-16 text-xl uppercase tracking-[0.3em] rounded-none bg-castello-plum hover:bg-castello-plum-deep text-castello-cream border-2 border-castello-gold font-serif"
+      className="h-24 px-24 text-2xl uppercase tracking-[0.3em] rounded-none bg-castello-plum hover:bg-castello-plum-deep text-castello-cream border-2 border-castello-gold font-serif"
     >
       Start
     </Button>
@@ -178,27 +178,27 @@ const DurationScreen = ({
   onSelect: (d: Duration) => void;
   onBack: () => void;
 }) => (
-  <div className="flex-1 flex flex-col items-center justify-center gap-10">
+  <div className="flex-1 flex flex-col items-center justify-center gap-12">
     <BackBar onBack={onBack} />
     <div className="flex flex-col items-center gap-4">
-      <h2 className="font-serif text-4xl md:text-6xl font-semibold text-castello-plum-deep text-center uppercase tracking-wide">
+      <h2 className="font-serif text-5xl md:text-7xl font-semibold text-castello-plum-deep text-center uppercase tracking-wide">
         Hvor lang tid har du?
       </h2>
-      <div className="h-px w-20 bg-castello-gold" />
+      <div className="h-px w-24 bg-castello-gold" />
     </div>
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-3xl">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-5xl">
       {(Object.keys(DURATION_LABELS) as Duration[]).map((d) => (
         <button
           key={d}
           onClick={() => onSelect(d)}
           className={cn(
-            "h-40 rounded-none border-2 transition-all text-center font-serif",
+            "h-52 rounded-none border-2 transition-all text-center font-serif",
             "bg-castello-plum hover:bg-castello-plum-deep text-castello-cream",
             "hover:shadow-[0_0_24px_hsl(var(--castello-gold)/0.5)]",
             value === d ? "border-castello-gold" : "border-castello-gold/60"
           )}
         >
-          <div className="text-3xl font-semibold tracking-wide">{DURATION_LABELS[d]}</div>
+          <div className="text-4xl font-semibold tracking-wide">{DURATION_LABELS[d]}</div>
         </button>
       ))}
     </div>
@@ -218,21 +218,21 @@ const TagsScreen = ({
     { key: "surprise", label: "Surprise me", tags: [...ALL_TAGS] },
   ];
   return (
-    <div className="flex-1 flex flex-col items-center justify-center gap-10">
+    <div className="flex-1 flex flex-col items-center justify-center gap-12">
       <BackBar onBack={onBack} />
       <div className="flex flex-col items-center gap-4">
-        <h2 className="font-serif text-4xl md:text-5xl font-semibold text-castello-plum-deep uppercase tracking-wide text-center">
+        <h2 className="font-serif text-5xl md:text-6xl font-semibold text-castello-plum-deep uppercase tracking-wide text-center">
           Måltidet må indeholde
         </h2>
-        <div className="h-px w-20 bg-castello-gold" />
+        <div className="h-px w-24 bg-castello-gold" />
       </div>
-      <div className="grid grid-cols-2 gap-6 w-full max-w-3xl">
+      <div className="grid grid-cols-2 gap-8 w-full max-w-5xl">
         {choices.map((c) => (
           <button
             key={c.key}
             onClick={() => onSelect(c.tags)}
             className={cn(
-              "h-32 rounded-none border-2 border-castello-gold/60 transition-all text-2xl font-serif font-semibold bg-castello-plum text-castello-cream hover:bg-castello-plum-deep hover:border-castello-gold hover:shadow-[0_0_24px_hsl(var(--castello-gold)/0.5)] tracking-wide",
+              "h-44 rounded-none border-2 border-castello-gold/60 transition-all text-3xl font-serif font-semibold bg-castello-plum text-castello-cream hover:bg-castello-plum-deep hover:border-castello-gold hover:shadow-[0_0_24px_hsl(var(--castello-gold)/0.5)] tracking-wide",
               c.key === "surprise" && "col-span-2"
             )}
           >
@@ -255,13 +255,13 @@ const ResultsScreen = ({
   onBack: () => void;
   onRestart: () => void;
 }) => (
-  <div className="flex-1 flex flex-col items-center gap-8 pt-4">
+  <div className="flex-1 flex flex-col items-center gap-10 pt-4">
     <BackBar onBack={onBack} />
     <div className="flex flex-col items-center gap-4">
-      <h2 className="font-serif text-4xl md:text-5xl font-semibold text-castello-plum-deep uppercase tracking-wide text-center">
+      <h2 className="font-serif text-5xl md:text-6xl font-semibold text-castello-plum-deep uppercase tracking-wide text-center">
         Vælg din favorit
       </h2>
-      <div className="h-px w-20 bg-castello-gold" />
+      <div className="h-px w-24 bg-castello-gold" />
     </div>
     {recipes.length === 0 ? (
       <div className="text-center text-castello-plum-deep space-y-4">
@@ -271,7 +271,7 @@ const ResultsScreen = ({
         </Button>
       </div>
     ) : (
-      <div className="grid grid-cols-2 gap-6 w-full max-w-3xl">
+      <div className="grid grid-cols-2 xl:grid-cols-4 gap-8 w-full max-w-[1500px]">
         {recipes.map((r) => (
           <RecipeCard key={r.slug} recipe={r} onPick={() => onPick(r)} />
         ))}
