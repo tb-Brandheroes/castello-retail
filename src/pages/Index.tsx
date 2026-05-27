@@ -255,13 +255,13 @@ const ResultsScreen = ({
   onBack: () => void;
   onRestart: () => void;
 }) => (
-  <div className="flex-1 flex flex-col items-center gap-8 pt-4">
+  <div className="flex-1 flex flex-col items-center gap-10 pt-4">
     <BackBar onBack={onBack} />
     <div className="flex flex-col items-center gap-4">
-      <h2 className="font-serif text-4xl md:text-5xl font-semibold text-castello-plum-deep uppercase tracking-wide text-center">
+      <h2 className="font-serif text-5xl md:text-6xl font-semibold text-castello-plum-deep uppercase tracking-wide text-center">
         Vælg din favorit
       </h2>
-      <div className="h-px w-20 bg-castello-gold" />
+      <div className="h-px w-24 bg-castello-gold" />
     </div>
     {recipes.length === 0 ? (
       <div className="text-center text-castello-plum-deep space-y-4">
@@ -271,7 +271,7 @@ const ResultsScreen = ({
         </Button>
       </div>
     ) : (
-      <div className="grid grid-cols-2 gap-6 w-full max-w-3xl">
+      <div className="grid grid-cols-2 xl:grid-cols-4 gap-8 w-full max-w-[1500px]">
         {recipes.map((r) => (
           <RecipeCard key={r.slug} recipe={r} onPick={() => onPick(r)} />
         ))}
