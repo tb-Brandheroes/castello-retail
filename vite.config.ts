@@ -36,6 +36,7 @@ export default defineConfig(({ mode }) => ({
       manifest: false, // keep using existing public/manifest.webmanifest
       workbox: {
         globPatterns: ["**/*.{js,css,html,png,jpg,jpeg,webp,svg,woff2,json}"],
+        globIgnores: ["**/downloads/**"],
         maximumFileSizeToCacheInBytes: 8 * 1024 * 1024,
         navigateFallback: "/index.html",
         navigateFallbackDenylist: [/^\/~oauth/, /^\/functions\//],
