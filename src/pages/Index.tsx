@@ -108,7 +108,7 @@ const Index = () => {
           transformOrigin: "center",
         }}
       />
-      <main className="flex-1 container mx-auto px-6 pt-12 pb-8 max-w-5xl relative z-10 flex flex-col">
+      <main className="flex-1 container mx-auto px-10 pt-16 pb-10 max-w-[1800px] relative z-10 flex flex-col">
         {step === "start" && <StartScreen onStart={handleStart} />}
 
         {step === "duration" && (
