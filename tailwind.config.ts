@@ -61,7 +61,13 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				castello: {
+					plum: 'hsl(var(--castello-plum))',
+					'plum-deep': 'hsl(var(--castello-plum-deep))',
+					gold: 'hsl(var(--castello-gold))',
+					cream: 'hsl(var(--castello-cream))',
+				},
 			},
 			backgroundImage: {
 				'gradient-primary': 'var(--gradient-primary)',
@@ -76,14 +82,6 @@ export default {
 				'display': ['"Cormorant Garamond"', 'Georgia', 'serif'],
 				'gotham': ['Montserrat', 'sans-serif'],
 				'sans': ['Montserrat', 'sans-serif'],
-			},
-			colors: {
-				castello: {
-					plum: 'hsl(var(--castello-plum))',
-					'plum-deep': 'hsl(var(--castello-plum-deep))',
-					gold: 'hsl(var(--castello-gold))',
-					cream: 'hsl(var(--castello-cream))',
-				},
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
