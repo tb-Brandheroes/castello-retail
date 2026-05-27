@@ -191,15 +191,17 @@ const Index = () => {
 
 const StartScreen = ({ onStart }: { onStart: () => void }) => (
   <div className="flex-1 flex flex-col items-center justify-center text-center gap-10">
-    <h1 className="text-4xl md:text-6xl font-semibold text-white drop-shadow-lg uppercase tracking-wide max-w-3xl">
+    <div className="text-castello-plum-deep/70 text-xs tracking-[0.4em] font-sans">SINCE 1893</div>
+    <h1 className="font-serif text-5xl md:text-7xl font-semibold text-castello-plum-deep uppercase tracking-wide max-w-3xl leading-tight">
       Klik dig frem til dit næste måltid
     </h1>
-    <p className="text-white/90 text-xl max-w-xl">
+    <div className="h-px w-24 bg-castello-gold" />
+    <p className="text-castello-plum-deep/80 text-xl max-w-xl font-sans">
       Vælg tid og præferencer - og lad Castello inspirere dig til aftensmaden.
     </p>
     <Button
       onClick={onStart}
-      className="h-20 px-16 text-xl uppercase tracking-wider rounded-none bg-primary hover:bg-primary/90 text-white"
+      className="h-20 px-16 text-xl uppercase tracking-[0.3em] rounded-none bg-castello-plum hover:bg-castello-plum-deep text-castello-cream border-2 border-castello-gold font-serif"
     >
       Start
     </Button>
@@ -215,23 +217,27 @@ const DurationScreen = ({
   onSelect: (d: Duration) => void;
   onBack: () => void;
 }) => (
-  <div className="flex-1 flex flex-col items-center justify-center gap-12">
+  <div className="flex-1 flex flex-col items-center justify-center gap-10">
     <BackBar onBack={onBack} />
-    <h2 className="text-3xl md:text-5xl font-semibold text-white text-center uppercase tracking-wide drop-shadow">
-      Hvor lang tid har du?
-    </h2>
+    <div className="flex flex-col items-center gap-4">
+      <h2 className="font-serif text-4xl md:text-6xl font-semibold text-castello-plum-deep text-center uppercase tracking-wide">
+        Hvor lang tid har du?
+      </h2>
+      <div className="h-px w-20 bg-castello-gold" />
+    </div>
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-3xl">
       {(Object.keys(DURATION_LABELS) as Duration[]).map((d) => (
         <button
           key={d}
           onClick={() => onSelect(d)}
           className={cn(
-            "h-40 rounded-2xl backdrop-blur-md border-2 transition-all text-center",
-            "bg-white/60 hover:bg-white/80 hover:scale-[1.02]",
-            value === d ? "border-primary" : "border-white/60"
+            "h-40 rounded-none border-2 transition-all text-center font-serif",
+            "bg-castello-plum hover:bg-castello-plum-deep text-castello-cream",
+            "hover:shadow-[0_0_24px_hsl(var(--castello-gold)/0.5)]",
+            value === d ? "border-castello-gold" : "border-castello-gold/60"
           )}
         >
-          <div className="text-3xl font-semibold text-foreground">{DURATION_LABELS[d]}</div>
+          <div className="text-3xl font-semibold tracking-wide">{DURATION_LABELS[d]}</div>
         </button>
       ))}
     </div>
@@ -253,15 +259,18 @@ const TagsScreen = ({
   return (
     <div className="flex-1 flex flex-col items-center justify-center gap-10">
       <BackBar onBack={onBack} />
-      <h2 className="text-3xl md:text-4xl font-semibold text-white uppercase tracking-wide drop-shadow text-center">
-        Måltidet må indeholde
-      </h2>
+      <div className="flex flex-col items-center gap-4">
+        <h2 className="font-serif text-4xl md:text-5xl font-semibold text-castello-plum-deep uppercase tracking-wide text-center">
+          Måltidet må indeholde
+        </h2>
+        <div className="h-px w-20 bg-castello-gold" />
+      </div>
       <div className="grid grid-cols-2 gap-6 w-full max-w-3xl">
         {choices.map((c) => (
           <button
             key={c.key}
             onClick={() => onSelect(c.tags)}
-            className="h-32 rounded-2xl backdrop-blur-md border-2 transition-all text-2xl font-semibold bg-white/60 text-foreground border-white/60 hover:bg-white/80 hover:scale-[1.02]"
+            className="h-32 rounded-none border-2 border-castello-gold/60 transition-all text-2xl font-serif font-semibold bg-castello-plum text-castello-cream hover:bg-castello-plum-deep hover:border-castello-gold hover:shadow-[0_0_24px_hsl(var(--castello-gold)/0.5)] tracking-wide"
           >
             {c.label}
           </button>
@@ -284,13 +293,16 @@ const ResultsScreen = ({
 }) => (
   <div className="flex-1 flex flex-col items-center gap-8 pt-4">
     <BackBar onBack={onBack} />
-    <h2 className="text-3xl md:text-4xl font-semibold text-white uppercase tracking-wide text-center drop-shadow">
-      Vælg din favorit
-    </h2>
+    <div className="flex flex-col items-center gap-4">
+      <h2 className="font-serif text-4xl md:text-5xl font-semibold text-castello-plum-deep uppercase tracking-wide text-center">
+        Vælg din favorit
+      </h2>
+      <div className="h-px w-20 bg-castello-gold" />
+    </div>
     {recipes.length === 0 ? (
-      <div className="text-center text-white space-y-4">
-        <p className="text-xl">Ingen opskrifter matcher dine valg.</p>
-        <Button onClick={onRestart} className="rounded-none">
+      <div className="text-center text-castello-plum-deep space-y-4">
+        <p className="text-xl font-serif">Ingen opskrifter matcher dine valg.</p>
+        <Button onClick={onRestart} className="rounded-none bg-castello-plum hover:bg-castello-plum-deep text-castello-cream border-2 border-castello-gold font-serif uppercase tracking-[0.2em]">
           Prøv igen
         </Button>
       </div>
@@ -309,11 +321,11 @@ const RecipeCard = ({ recipe, onPick }: { recipe: Recipe; onPick: () => void }) 
   return (
     <button
       onClick={onPick}
-      className="group bg-white/80 backdrop-blur-md rounded-2xl overflow-hidden border-2 border-white/60 hover:border-primary transition-all hover:scale-[1.02] text-left flex flex-col"
+      className="group bg-castello-cream rounded-none overflow-hidden border-2 border-castello-gold/60 hover:border-castello-gold hover:shadow-[0_0_24px_hsl(var(--castello-gold)/0.5)] transition-all text-left flex flex-col"
     >
-      <div className="aspect-[4/3] bg-muted overflow-hidden flex items-center justify-center">
+      <div className="aspect-[4/3] bg-castello-plum/10 overflow-hidden flex items-center justify-center">
         {isLoading ? (
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          <Loader2 className="h-8 w-8 animate-spin text-castello-plum/60" />
         ) : data?.image ? (
           <img
             src={data.image}
@@ -321,11 +333,11 @@ const RecipeCard = ({ recipe, onPick }: { recipe: Recipe; onPick: () => void }) 
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
         ) : (
-          <div className="text-muted-foreground text-sm">Billede ikke tilgængeligt</div>
+          <div className="text-castello-plum/60 text-sm">Billede ikke tilgængeligt</div>
         )}
       </div>
-      <div className="p-3 md:p-4 min-h-[4rem] flex items-center">
-        <h3 className="text-sm md:text-base lg:text-lg font-semibold text-foreground leading-snug line-clamp-3">
+      <div className="p-3 md:p-4 min-h-[4rem] flex items-center bg-castello-plum">
+        <h3 className="font-serif text-base md:text-lg lg:text-xl font-semibold text-castello-cream leading-snug line-clamp-3">
           {data?.name ?? "Indlæser…"}
         </h3>
       </div>
@@ -357,7 +369,7 @@ const DetailOverlay = ({ recipe, onClose }: { recipe: Recipe; onClose: () => voi
           )}
         </div>
         <div className="p-6 md:p-8 lg:p-10 flex flex-col gap-5">
-          <h2 className="text-2xl md:text-3xl lg:text-4xl font-semibold text-foreground leading-tight">
+          <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-semibold text-castello-plum-deep leading-tight">
             {data?.name ?? "Indlæser…"}
           </h2>
           {data?.description && (
@@ -386,7 +398,7 @@ const BackBar = ({ onBack }: { onBack: () => void }) => (
   <div className="self-start">
     <button
       onClick={onBack}
-      className="flex items-center gap-2 text-white/90 hover:text-white text-base"
+      className="flex items-center gap-2 text-castello-plum-deep/80 hover:text-castello-plum-deep text-base font-serif tracking-wide uppercase"
     >
       <ArrowLeft className="h-5 w-5" /> Tilbage
     </button>

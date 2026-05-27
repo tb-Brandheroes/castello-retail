@@ -61,7 +61,13 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				castello: {
+					plum: 'hsl(var(--castello-plum))',
+					'plum-deep': 'hsl(var(--castello-plum-deep))',
+					gold: 'hsl(var(--castello-gold))',
+					cream: 'hsl(var(--castello-cream))',
+				},
 			},
 			backgroundImage: {
 				'gradient-primary': 'var(--gradient-primary)',
@@ -72,7 +78,8 @@ export default {
 				'elegant': 'var(--shadow-elegant)',
 			},
 			fontFamily: {
-				'serif': ['Georgia', 'Times New Roman', 'serif'],
+				'serif': ['"Cormorant Garamond"', 'Georgia', 'serif'],
+				'display': ['"Cormorant Garamond"', 'Georgia', 'serif'],
 				'gotham': ['Montserrat', 'sans-serif'],
 				'sans': ['Montserrat', 'sans-serif'],
 			},

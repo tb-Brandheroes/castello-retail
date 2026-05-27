@@ -37,6 +37,12 @@ All colors MUST be HSL.
     --input: 310 25% 85%;
     --ring: 315 65% 65%;
 
+    /* Castello brand tokens */
+    --castello-plum: 330 45% 22%;
+    --castello-plum-deep: 330 50% 14%;
+    --castello-gold: 38 55% 62%;
+    --castello-cream: 40 55% 92%;
+
     /* Refined Moment Design Tokens */
     --gradient-primary: linear-gradient(135deg, hsl(315 65% 65%), hsl(325 70% 75%));
     --gradient-elegant: linear-gradient(135deg, hsl(310 50% 80%), hsl(320 60% 85%));
