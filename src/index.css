@@ -232,3 +232,16 @@ All colors MUST be HSL.
 .float-6 {
   animation: float-whisper 6s ease-in-out infinite 3s;
 }
+/* ===== Kiosk hardening (Android retail tablets) ===== */
+html, body {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+  touch-action: manipulation;
+}
+input, textarea {
+  -webkit-user-select: text;
+  user-select: text;
+}

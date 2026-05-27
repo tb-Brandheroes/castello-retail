@@ -1,36 +1,26 @@
-import { useQuery, type QueryClient } from "@tanstack/react-query";
+import recipesMeta from "@/data/recipes-meta.json";
 
 export type RecipeMeta = { name: string; description: string; image: string };
 
-const FUNCTIONS_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/recipe-meta`;
+const META: Record<string, RecipeMeta> = recipesMeta as Record<string, RecipeMeta>;
 
-async function fetchMeta(url: string): Promise<RecipeMeta> {
-  const res = await fetch(`${FUNCTIONS_URL}?url=${encodeURIComponent(url)}`, {
-    headers: {
-      Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-      apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-    },
-  });
-  if (!res.ok) throw new Error(`Failed to load recipe metadata (${res.status})`);
-  return res.json();
+const EMPTY: RecipeMeta = { name: "", description: "", image: "" };
+
+export function getRecipeMeta(url: string | null): RecipeMeta {
+  if (!url) return EMPTY;
+  return META[url] ?? EMPTY;
 }
 
-export function recipeMetaQuery(url: string) {
-  return {
-    queryKey: ["recipe-meta", url],
-    queryFn: () => fetchMeta(url),
-    staleTime: 1000 * 60 * 60 * 24,
-  };
+/** Backwards-compatible hook: synchronous, always resolved from bundled JSON. */
+export function useRecipeMeta(url: string | null): {
+  data: RecipeMeta | undefined;
+  isLoading: false;
+} {
+  const meta = url ? META[url] : undefined;
+  return { data: meta, isLoading: false };
 }
 
-export function prefetchRecipeMeta(qc: QueryClient, url: string) {
-  return qc.prefetchQuery(recipeMetaQuery(url));
-}
-
-export function useRecipeMeta(url: string | null) {
-  return useQuery({
-    ...recipeMetaQuery(url ?? ""),
-    enabled: !!url,
-    retry: 1,
-  });
+// No-op for legacy callers
+export function prefetchRecipeMeta(_qc: unknown, _url: string) {
+  return Promise.resolve();
 }

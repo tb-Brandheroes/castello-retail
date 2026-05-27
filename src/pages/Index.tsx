@@ -1,20 +1,18 @@
 import { useEffect, useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
 import { QRCodeSVG } from "qrcode.react";
-import { Loader2, X, ArrowLeft } from "lucide-react";
+import { X, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
   ALL_TAGS,
   DURATION_LABELS,
-  RECIPES,
   TAG_LABELS,
   pickRecipes,
   type Duration,
   type Recipe,
   type Tag,
 } from "@/data/recipes";
-import { useRecipeMeta, prefetchRecipeMeta, type RecipeMeta } from "@/hooks/useRecipeMeta";
+import { useRecipeMeta } from "@/hooks/useRecipeMeta";
 import { useIdleReset } from "@/hooks/useIdleReset";
 import {
   startSession,
@@ -32,56 +30,12 @@ const IDLE_MS = 60_000;
 const DETAIL_AUTOCLOSE_MS = 30_000;
 
 const Index = () => {
-  const qc = useQueryClient();
   const [step, setStep] = useState<Step>("start");
   const [duration, setDuration] = useState<Duration | null>(null);
   const [tags, setTags] = useState<Tag[]>([]);
   const [results, setResults] = useState<Recipe[]>([]);
   const [selected, setSelected] = useState<Recipe | null>(null);
 
-  // Prefetch all recipe metadata + preload images on mount, so cards render instantly.
-  useEffect(() => {
-    let cancelled = false;
-    const warm = async () => {
-      // Limit concurrency to avoid hammering the edge function.
-      const queue = [...RECIPES];
-      const workers = Array.from({ length: 20 }, async () => {
-        while (!cancelled && queue.length) {
-          const r = queue.shift()!;
-          try {
-            const meta = await qc.fetchQuery({
-              queryKey: ["recipe-meta", r.url],
-              queryFn: async () => {
-                const res = await fetch(
-                  `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/recipe-meta?url=${encodeURIComponent(r.url)}`,
-                  {
-                    headers: {
-                      Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-                      apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-                    },
-                  },
-                );
-                if (!res.ok) throw new Error(String(res.status));
-                return (await res.json()) as RecipeMeta;
-              },
-              staleTime: 1000 * 60 * 60 * 24,
-            });
-            if (meta?.image) {
-              const img = new Image();
-              img.src = meta.image;
-            }
-          } catch {
-            // ignore individual failures
-          }
-        }
-      });
-      await Promise.all(workers);
-    };
-    warm();
-    return () => {
-      cancelled = true;
-    };
-  }, [qc]);
 
   const reset = () => {
     if (hasSession() && step !== "detail") {
@@ -119,7 +73,6 @@ const Index = () => {
   const goResults = (chosenTags: Tag[]) => {
     if (!duration || chosenTags.length === 0) return;
     const picked = pickRecipes(duration, chosenTags, 4);
-    picked.forEach((r) => prefetchRecipeMeta(qc, r.url));
     setTags(chosenTags);
     setResults(picked);
     updateSession({ tags: chosenTags, abandoned_step: "results" });
@@ -320,16 +273,14 @@ const ResultsScreen = ({
 );
 
 const RecipeCard = ({ recipe, onPick }: { recipe: Recipe; onPick: () => void }) => {
-  const { data, isLoading } = useRecipeMeta(recipe.url);
+  const { data } = useRecipeMeta(recipe.url);
   return (
     <button
       onClick={onPick}
       className="group bg-castello-cream rounded-none overflow-hidden border-2 border-castello-gold/60 hover:border-castello-gold hover:shadow-[0_0_24px_hsl(var(--castello-gold)/0.5)] transition-all text-left flex flex-col"
     >
       <div className="aspect-[4/3] bg-castello-plum/10 overflow-hidden flex items-center justify-center">
-        {isLoading ? (
-          <Loader2 className="h-8 w-8 animate-spin text-castello-plum/60" />
-        ) : data?.image ? (
+        {data?.image ? (
           <img
             src={data.image}
             alt={data.name}
@@ -341,15 +292,16 @@ const RecipeCard = ({ recipe, onPick }: { recipe: Recipe; onPick: () => void }) 
       </div>
       <div className="p-3 md:p-4 min-h-[4rem] flex items-center bg-castello-plum">
         <h3 className="font-serif text-base md:text-lg lg:text-xl font-semibold text-castello-cream leading-snug line-clamp-3">
-          {data?.name ?? "Indlæser…"}
+          {data?.name ?? recipe.slug}
         </h3>
       </div>
     </button>
   );
 };
 
+
 const DetailOverlay = ({ recipe, onClose }: { recipe: Recipe; onClose: () => void }) => {
-  const { data, isLoading } = useRecipeMeta(recipe.url);
+  const { data } = useRecipeMeta(recipe.url);
   return (
     <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur-sm flex items-center justify-center p-4 md:p-6 animate-in fade-in duration-300 overflow-y-auto">
       <button
@@ -361,14 +313,8 @@ const DetailOverlay = ({ recipe, onClose }: { recipe: Recipe; onClose: () => voi
       </button>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 max-w-6xl w-full max-h-[95vh] bg-card rounded-3xl overflow-y-auto shadow-2xl my-auto">
         <div className="lg:aspect-auto bg-muted overflow-hidden h-[35vh] lg:h-auto">
-          {isLoading ? (
-            <div className="w-full h-full flex items-center justify-center">
-              <Loader2 className="h-10 w-10 animate-spin text-muted-foreground" />
-            </div>
-          ) : (
-            data?.image && (
-              <img src={data.image} alt={data.name} className="w-full h-full object-cover" />
-            )
+          {data?.image && (
+            <img src={data.image} alt={data.name} className="w-full h-full object-cover" />
           )}
         </div>
         <div className="p-6 md:p-8 lg:p-10 flex flex-col gap-5">

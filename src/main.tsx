@@ -1,5 +1,29 @@
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
+import { flushOutbox } from './lib/analytics'
 
 createRoot(document.getElementById("root")!).render(<App />);
+
+// --- Service worker registration (production + standalone window only) ---
+const isInIframe = (() => {
+  try { return window.self !== window.top; } catch { return true; }
+})();
+const host = window.location.hostname;
+const isPreviewHost =
+  host.includes("lovableproject.com") ||
+  host.includes("lovable.app") && host.includes("id-preview--");
+
+if (isInIframe || isPreviewHost) {
+  // Make sure no stale SW interferes inside the Lovable preview iframe
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.getRegistrations().then((rs) => rs.forEach((r) => r.unregister()));
+  }
+} else if ("serviceWorker" in navigator && import.meta.env.PROD) {
+  import("virtual:pwa-register")
+    .then(({ registerSW }) => registerSW({ immediate: true }))
+    .catch(() => { /* PWA disabled */ });
+}
+
+// Try to flush queued analytics whenever we come back online
+window.addEventListener("online", () => { flushOutbox(); });
