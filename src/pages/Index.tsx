@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
+import { Link } from "react-router-dom";
 import { X, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -333,16 +334,24 @@ const DetailOverlay = ({ recipe, onClose }: { recipe: Recipe; onClose: () => voi
               {data.description}
             </p>
           )}
-          <div className="mt-auto flex items-center gap-5 pt-4">
-            <div className="bg-white p-3 rounded-xl shadow shrink-0">
-              <QRCodeSVG value={recipe.url} size={140} level="M" includeMargin={false} />
+          <div className="mt-auto flex flex-col gap-3 pt-4">
+            <div className="flex items-center gap-5">
+              <div className="bg-white p-3 rounded-xl shadow shrink-0">
+                <QRCodeSVG value={recipe.url} size={140} level="M" includeMargin={false} />
+              </div>
+              <div className="text-foreground min-w-0">
+                <p className="text-base md:text-lg font-semibold mb-1">Scan for opskriften</p>
+                <p className="text-sm text-muted-foreground">
+                  Find hele opskriften på castellocheese.com
+                </p>
+              </div>
             </div>
-            <div className="text-foreground min-w-0">
-              <p className="text-base md:text-lg font-semibold mb-1">Scan for opskriften</p>
-              <p className="text-sm text-muted-foreground">
-                Find hele opskriften på castellocheese.com
-              </p>
-            </div>
+            <Link
+              to={`/recipe/${recipe.slug}`}
+              className="text-sm text-castello-plum-deep/70 hover:text-castello-plum-deep underline underline-offset-4 self-start"
+            >
+              Eller vis opskriften her på skærmen
+            </Link>
           </div>
         </div>
       </div>

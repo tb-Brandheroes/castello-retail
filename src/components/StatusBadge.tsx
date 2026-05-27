@@ -13,6 +13,7 @@ export function StatusBadge() {
     typeof navigator === "undefined" ? true : navigator.onLine !== false,
   );
   const [cacheState, setCacheState] = useState<CacheState>("checking");
+  const [storagePct, setStoragePct] = useState<number | null>(null);
   const [visible, setVisible] = useState(true);
   const tapsRef = useRef<number[]>([]);
   const hideTimer = useRef<number | null>(null);
@@ -50,6 +51,17 @@ export function StatusBadge() {
           total += (await c.keys()).length;
         }
         if (!cancelled) setCacheState(total > 50 ? "ready" : "partial");
+
+        try {
+          if ("storage" in navigator && navigator.storage?.estimate) {
+            const est = await navigator.storage.estimate();
+            if (est.quota && est.usage && !cancelled) {
+              setStoragePct(Math.round((est.usage / est.quota) * 100));
+            }
+          }
+        } catch {
+          /* ignore */
+        }
       } catch {
         if (!cancelled) setCacheState("partial");
       }
@@ -143,6 +155,16 @@ export function StatusBadge() {
       <span>
         v{__APP_VERSION__} · {label}
       </span>
+      {storagePct !== null && (
+        <span
+          style={{
+            opacity: 0.7,
+            color: storagePct > 80 ? "#b45309" : "#374151",
+          }}
+        >
+          · {storagePct}% disk
+        </span>
+      )}
       <span style={{ opacity: 0.5 }}>· {__APP_BUILD_TIME__}</span>
     </div>
   );

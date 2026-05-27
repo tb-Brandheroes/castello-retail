@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      device_heartbeats: {
+        Row: {
+          app_version: string | null
+          created_at: string
+          id: string
+          location: string | null
+          tz_offset_minutes: number | null
+        }
+        Insert: {
+          app_version?: string | null
+          created_at?: string
+          id?: string
+          location?: string | null
+          tz_offset_minutes?: number | null
+        }
+        Update: {
+          app_version?: string | null
+          created_at?: string
+          id?: string
+          location?: string | null
+          tz_offset_minutes?: number | null
+        }
+        Relationships: []
+      }
       recipe_views: {
         Row: {
           created_at: string
@@ -59,6 +83,7 @@ export type Database = {
           shown_slugs: string[] | null
           started_at: string
           tags: string[] | null
+          tz_offset_minutes: number | null
         }
         Insert: {
           abandoned_step?: string | null
@@ -72,6 +97,7 @@ export type Database = {
           shown_slugs?: string[] | null
           started_at?: string
           tags?: string[] | null
+          tz_offset_minutes?: number | null
         }
         Update: {
           abandoned_step?: string | null
@@ -85,6 +111,7 @@ export type Database = {
           shown_slugs?: string[] | null
           started_at?: string
           tags?: string[] | null
+          tz_offset_minutes?: number | null
         }
         Relationships: []
       }

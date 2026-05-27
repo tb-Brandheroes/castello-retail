@@ -1,7 +1,7 @@
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
-import { flushOutbox } from './lib/analytics'
+import { startBackgroundScheduler } from './lib/analytics'
 import { ErrorBoundary } from './components/ErrorBoundary'
 
 
@@ -42,6 +42,5 @@ if (isInIframe || isPreviewHost) {
     .catch(() => { /* PWA disabled */ });
 }
 
-// Flush queued analytics at startup (in case net is already back) and whenever we come online
-flushOutbox();
-window.addEventListener("online", () => { flushOutbox(); });
+// Periodic flush, online-reconnect flush, IDB-recovery and heartbeat
+startBackgroundScheduler();
