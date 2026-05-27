@@ -14,6 +14,8 @@ import {
 } from "@/data/recipes";
 import { useRecipeMeta } from "@/hooks/useRecipeMeta";
 import { useIdleReset } from "@/hooks/useIdleReset";
+import { useWakeLock } from "@/hooks/useWakeLock";
+import { StatusBadge } from "@/components/StatusBadge";
 import {
   startSession,
   updateSession,
@@ -35,6 +37,10 @@ const Index = () => {
   const [tags, setTags] = useState<Tag[]>([]);
   const [results, setResults] = useState<Recipe[]>([]);
   const [selected, setSelected] = useState<Recipe | null>(null);
+
+  useWakeLock();
+
+
 
 
   const reset = () => {
@@ -88,6 +94,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen relative overflow-hidden flex flex-col bg-primary">
+      <StatusBadge />
       <div
         aria-hidden
         className="absolute inset-0 z-0 pointer-events-none"

@@ -1,11 +1,20 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
+import { readFileSync } from "fs";
 import { componentTagger } from "lovable-tagger";
 import { VitePWA } from "vite-plugin-pwa";
 
+const pkg = JSON.parse(readFileSync(path.resolve(__dirname, "package.json"), "utf8"));
+const APP_VERSION = pkg.version || "0.0.0";
+const APP_BUILD_TIME = new Date().toISOString().slice(0, 16).replace("T", " ");
+
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
+  define: {
+    __APP_VERSION__: JSON.stringify(APP_VERSION),
+    __APP_BUILD_TIME__: JSON.stringify(APP_BUILD_TIME),
+  },
   server: {
     host: "::",
     port: 8080,

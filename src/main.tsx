@@ -2,6 +2,8 @@ import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
 import { flushOutbox } from './lib/analytics'
+import { ErrorBoundary } from './components/ErrorBoundary'
+
 
 // Bundled fonts — no runtime requests to Google Fonts
 import '@fontsource/cormorant-garamond/400.css'
@@ -14,7 +16,11 @@ import '@fontsource/montserrat/500.css'
 import '@fontsource/montserrat/600.css'
 import '@fontsource/montserrat/700.css'
 
-createRoot(document.getElementById("root")!).render(<App />);
+createRoot(document.getElementById("root")!).render(
+  <ErrorBoundary>
+    <App />
+  </ErrorBoundary>,
+);
 
 // --- Service worker registration (production + standalone window only) ---
 const isInIframe = (() => {
