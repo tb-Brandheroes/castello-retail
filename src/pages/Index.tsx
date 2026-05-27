@@ -321,11 +321,11 @@ const RecipeCard = ({ recipe, onPick }: { recipe: Recipe; onPick: () => void }) 
   return (
     <button
       onClick={onPick}
-      className="group bg-white/80 backdrop-blur-md rounded-2xl overflow-hidden border-2 border-white/60 hover:border-primary transition-all hover:scale-[1.02] text-left flex flex-col"
+      className="group bg-castello-cream rounded-none overflow-hidden border-2 border-castello-gold/60 hover:border-castello-gold hover:shadow-[0_0_24px_hsl(var(--castello-gold)/0.5)] transition-all text-left flex flex-col"
     >
-      <div className="aspect-[4/3] bg-muted overflow-hidden flex items-center justify-center">
+      <div className="aspect-[4/3] bg-castello-plum/10 overflow-hidden flex items-center justify-center">
         {isLoading ? (
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          <Loader2 className="h-8 w-8 animate-spin text-castello-plum/60" />
         ) : data?.image ? (
           <img
             src={data.image}
@@ -333,11 +333,11 @@ const RecipeCard = ({ recipe, onPick }: { recipe: Recipe; onPick: () => void }) 
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
         ) : (
-          <div className="text-muted-foreground text-sm">Billede ikke tilgængeligt</div>
+          <div className="text-castello-plum/60 text-sm">Billede ikke tilgængeligt</div>
         )}
       </div>
-      <div className="p-3 md:p-4 min-h-[4rem] flex items-center">
-        <h3 className="text-sm md:text-base lg:text-lg font-semibold text-foreground leading-snug line-clamp-3">
+      <div className="p-3 md:p-4 min-h-[4rem] flex items-center bg-castello-plum">
+        <h3 className="font-serif text-base md:text-lg lg:text-xl font-semibold text-castello-cream leading-snug line-clamp-3">
           {data?.name ?? "Indlæser…"}
         </h3>
       </div>
