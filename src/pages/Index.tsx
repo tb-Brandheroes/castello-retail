@@ -14,6 +14,8 @@ import {
 } from "@/data/recipes";
 import { useRecipeMeta } from "@/hooks/useRecipeMeta";
 import { useIdleReset } from "@/hooks/useIdleReset";
+import { useWakeLock } from "@/hooks/useWakeLock";
+import { StatusBadge } from "@/components/StatusBadge";
 import {
   startSession,
   updateSession,
