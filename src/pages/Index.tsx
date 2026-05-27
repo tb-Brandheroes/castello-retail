@@ -73,7 +73,6 @@ const Index = () => {
   const goResults = (chosenTags: Tag[]) => {
     if (!duration || chosenTags.length === 0) return;
     const picked = pickRecipes(duration, chosenTags, 4);
-    picked.forEach((r) => prefetchRecipeMeta(qc, r.url));
     setTags(chosenTags);
     setResults(picked);
     updateSession({ tags: chosenTags, abandoned_step: "results" });
