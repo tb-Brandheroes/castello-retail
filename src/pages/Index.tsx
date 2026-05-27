@@ -218,21 +218,21 @@ const TagsScreen = ({
     { key: "surprise", label: "Surprise me", tags: [...ALL_TAGS] },
   ];
   return (
-    <div className="flex-1 flex flex-col items-center justify-center gap-10">
+    <div className="flex-1 flex flex-col items-center justify-center gap-12">
       <BackBar onBack={onBack} />
       <div className="flex flex-col items-center gap-4">
-        <h2 className="font-serif text-4xl md:text-5xl font-semibold text-castello-plum-deep uppercase tracking-wide text-center">
+        <h2 className="font-serif text-5xl md:text-6xl font-semibold text-castello-plum-deep uppercase tracking-wide text-center">
           Måltidet må indeholde
         </h2>
-        <div className="h-px w-20 bg-castello-gold" />
+        <div className="h-px w-24 bg-castello-gold" />
       </div>
-      <div className="grid grid-cols-2 gap-6 w-full max-w-3xl">
+      <div className="grid grid-cols-2 gap-8 w-full max-w-5xl">
         {choices.map((c) => (
           <button
             key={c.key}
             onClick={() => onSelect(c.tags)}
             className={cn(
-              "h-32 rounded-none border-2 border-castello-gold/60 transition-all text-2xl font-serif font-semibold bg-castello-plum text-castello-cream hover:bg-castello-plum-deep hover:border-castello-gold hover:shadow-[0_0_24px_hsl(var(--castello-gold)/0.5)] tracking-wide",
+              "h-44 rounded-none border-2 border-castello-gold/60 transition-all text-3xl font-serif font-semibold bg-castello-plum text-castello-cream hover:bg-castello-plum-deep hover:border-castello-gold hover:shadow-[0_0_24px_hsl(var(--castello-gold)/0.5)] tracking-wide",
               c.key === "surprise" && "col-span-2"
             )}
           >
