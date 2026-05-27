@@ -178,27 +178,27 @@ const DurationScreen = ({
   onSelect: (d: Duration) => void;
   onBack: () => void;
 }) => (
-  <div className="flex-1 flex flex-col items-center justify-center gap-10">
+  <div className="flex-1 flex flex-col items-center justify-center gap-12">
     <BackBar onBack={onBack} />
     <div className="flex flex-col items-center gap-4">
-      <h2 className="font-serif text-4xl md:text-6xl font-semibold text-castello-plum-deep text-center uppercase tracking-wide">
+      <h2 className="font-serif text-5xl md:text-7xl font-semibold text-castello-plum-deep text-center uppercase tracking-wide">
         Hvor lang tid har du?
       </h2>
-      <div className="h-px w-20 bg-castello-gold" />
+      <div className="h-px w-24 bg-castello-gold" />
     </div>
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-3xl">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-5xl">
       {(Object.keys(DURATION_LABELS) as Duration[]).map((d) => (
         <button
           key={d}
           onClick={() => onSelect(d)}
           className={cn(
-            "h-40 rounded-none border-2 transition-all text-center font-serif",
+            "h-52 rounded-none border-2 transition-all text-center font-serif",
             "bg-castello-plum hover:bg-castello-plum-deep text-castello-cream",
             "hover:shadow-[0_0_24px_hsl(var(--castello-gold)/0.5)]",
             value === d ? "border-castello-gold" : "border-castello-gold/60"
           )}
         >
-          <div className="text-3xl font-semibold tracking-wide">{DURATION_LABELS[d]}</div>
+          <div className="text-4xl font-semibold tracking-wide">{DURATION_LABELS[d]}</div>
         </button>
       ))}
     </div>
