@@ -72,9 +72,18 @@ export default {
 				'elegant': 'var(--shadow-elegant)',
 			},
 			fontFamily: {
-				'serif': ['Georgia', 'Times New Roman', 'serif'],
+				'serif': ['"Cormorant Garamond"', 'Georgia', 'serif'],
+				'display': ['"Cormorant Garamond"', 'Georgia', 'serif'],
 				'gotham': ['Montserrat', 'sans-serif'],
 				'sans': ['Montserrat', 'sans-serif'],
+			},
+			colors: {
+				castello: {
+					plum: 'hsl(var(--castello-plum))',
+					'plum-deep': 'hsl(var(--castello-plum-deep))',
+					gold: 'hsl(var(--castello-gold))',
+					cream: 'hsl(var(--castello-cream))',
+				},
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
