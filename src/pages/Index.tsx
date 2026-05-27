@@ -94,6 +94,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen relative overflow-hidden flex flex-col bg-primary">
+      <StatusBadge />
       <div
         aria-hidden
         className="absolute inset-0 z-0 pointer-events-none"
