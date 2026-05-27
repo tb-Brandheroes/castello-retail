@@ -151,18 +151,18 @@ const Index = () => {
 /* ---------------- screens ---------------- */
 
 const StartScreen = ({ onStart }: { onStart: () => void }) => (
-  <div className="flex-1 flex flex-col items-center justify-center text-center gap-10">
-    <div className="text-castello-plum-deep/70 text-xs tracking-[0.4em] font-sans">SINCE 1893</div>
-    <h1 className="font-serif text-5xl md:text-7xl font-semibold text-castello-plum-deep uppercase tracking-wide max-w-3xl leading-tight">
+  <div className="flex-1 flex flex-col items-center justify-center text-center gap-12">
+    <div className="text-castello-plum-deep/70 text-sm tracking-[0.5em] font-sans">SINCE 1893</div>
+    <h1 className="font-serif text-6xl md:text-8xl xl:text-9xl font-semibold text-castello-plum-deep uppercase tracking-wide max-w-5xl leading-[1.05]">
       Klik dig frem til dit næste måltid
     </h1>
-    <div className="h-px w-24 bg-castello-gold" />
-    <p className="text-castello-plum-deep/80 text-xl max-w-xl font-sans">
+    <div className="h-px w-32 bg-castello-gold" />
+    <p className="text-castello-plum-deep/80 text-2xl xl:text-3xl max-w-2xl font-sans">
       Vælg tid og præferencer - og lad Castello inspirere dig til aftensmaden.
     </p>
     <Button
       onClick={onStart}
-      className="h-20 px-16 text-xl uppercase tracking-[0.3em] rounded-none bg-castello-plum hover:bg-castello-plum-deep text-castello-cream border-2 border-castello-gold font-serif"
+      className="h-24 px-24 text-2xl uppercase tracking-[0.3em] rounded-none bg-castello-plum hover:bg-castello-plum-deep text-castello-cream border-2 border-castello-gold font-serif"
     >
       Start
     </Button>
