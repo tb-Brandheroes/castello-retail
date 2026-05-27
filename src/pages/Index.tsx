@@ -319,8 +319,8 @@ const DetailOverlay = ({ recipe, onClose }: { recipe: Recipe; onClose: () => voi
       >
         <X className="h-7 w-7" />
       </button>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 max-w-6xl w-full max-h-[95vh] bg-card rounded-3xl overflow-y-auto shadow-2xl my-auto">
-        <div className="lg:aspect-auto bg-muted overflow-hidden h-[35vh] lg:h-auto">
+      <div className="grid grid-cols-1 gap-0 max-w-3xl w-full max-h-[95vh] bg-card rounded-3xl overflow-y-auto shadow-2xl my-auto">
+        <div className="bg-muted overflow-hidden h-[45vh]">
           {data?.image && (
             <img src={data.image} alt={data.name} className="w-full h-full object-cover" />
           )}
