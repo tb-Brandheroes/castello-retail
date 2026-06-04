@@ -36,6 +36,11 @@ jobs:
           SKIP_PREFETCH: "1"
         run: npm run build
 
+      - name: Strip web-only download assets
+        # Lovable serves the APK at /downloads on the web build; we don't
+        # want to bundle the APK inside itself when packaging for Android.
+        run: rm -rf dist/downloads
+
       - name: Sync Capacitor
         run: npx cap sync android
 
