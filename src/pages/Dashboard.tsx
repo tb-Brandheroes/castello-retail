@@ -41,6 +41,19 @@ const Dashboard = () => {
   const [views, setViews] = useState<View[]>([]);
   const [locFilter, setLocFilter] = useState<string>("all");
   const [loading, setLoading] = useState(true);
+  const [deviceName, setDeviceName] = useState<string>(() => getDeviceLocation());
+  const [nameInput, setNameInput] = useState<string>(() => getDeviceLocation());
+
+  const saveDeviceName = () => {
+    const trimmed = nameInput.trim();
+    if (!trimmed) {
+      toast.error("Skriv et navn til denne skærm");
+      return;
+    }
+    setDeviceLocation(trimmed);
+    setDeviceName(trimmed);
+    toast.success(`Skærm gemt som "${trimmed}"`);
+  };
 
   useEffect(() => {
     document.title = "Castello Kiosk – Dashboard";
