@@ -187,17 +187,51 @@ const Dashboard = () => {
             <h1 className="text-3xl md:text-4xl font-semibold">Kiosk Dashboard</h1>
             <p className="text-muted-foreground mt-1">Brug af Castello opskrifts-kiosken</p>
           </div>
-          <select
-            value={locFilter}
-            onChange={(e) => setLocFilter(e.target.value)}
-            className="border rounded-md px-3 py-2 bg-card"
-          >
-            {locations.map((l) => (
-              <option key={l} value={l}>
-                {l === "all" ? "Alle lokationer" : l}
-              </option>
-            ))}
-          </select>
+          <div className="flex flex-wrap items-end gap-2">
+            <div className="flex flex-col">
+              <label className="text-xs text-muted-foreground mb-1">Fra</label>
+              <input
+                type="date"
+                value={fromDate}
+                onChange={(e) => setFromDate(e.target.value)}
+                className="border rounded-md px-2 py-2 bg-card text-sm"
+              />
+            </div>
+            <div className="flex flex-col">
+              <label className="text-xs text-muted-foreground mb-1">Til</label>
+              <input
+                type="date"
+                value={toDate}
+                onChange={(e) => setToDate(e.target.value)}
+                className="border rounded-md px-2 py-2 bg-card text-sm"
+              />
+            </div>
+            <div className="flex gap-1">
+              <Button variant="outline" size="sm" onClick={() => setRange("today")}>
+                I dag
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => setRange(7)}>
+                7 dage
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => setRange(30)}>
+                30 dage
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => setRange("all")}>
+                Alt
+              </Button>
+            </div>
+            <select
+              value={locFilter}
+              onChange={(e) => setLocFilter(e.target.value)}
+              className="border rounded-md px-3 py-2 bg-card"
+            >
+              {locations.map((l) => (
+                <option key={l} value={l}>
+                  {l === "all" ? "Alle lokationer" : l}
+                </option>
+              ))}
+            </select>
+          </div>
         </header>
 
         <Panel title="Denne skærms navn">
