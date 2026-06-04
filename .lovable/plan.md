@@ -1,37 +1,10 @@
-# Dato-filter på dashboardet
+## Mål
+Opdater download-siden så `Download APK`-knappen serverer den nye build du har uploadet (`castello-moments-debug (1).zip` → `app-debug.apk`, 28 MB, 4. juni 2026).
 
-Alle tabeller har allerede timestamps (`sessions.started_at`, `recipe_views.created_at`, `device_heartbeats.created_at`) — vi tilføjer bare et UI-filter.
+## Trin
+1. Pak `app-debug.apk` ud af den uploadede zip.
+2. Overskriv `public/downloads/castello-moments.apk` med den nye APK (samme filnavn, så URL'en `/downloads/castello-moments.apk` virker uændret — tablets behøver ikke nyt link).
+3. Opdater `APK_SIZE` i `src/pages/AppDownload.tsx` fra `"27 MB"` til `"28 MB"` så størrelsen vist under knappen matcher.
 
-## Ændringer (kun `src/pages/Dashboard.tsx`)
-
-1. **Dato-vælger i header** ved siden af lokations-dropdownen:
-   - To `<input type="date">` felter: "Fra" og "Til"
-   - Hurtige genveje: "I dag", "7 dage", "30 dage", "Alt" (knapper)
-   - Default: sidste 30 dage
-
-2. **Filtrering i hukommelse**: Vi henter allerede de seneste 2000 sessioner / 5000 views — vi tilføjer en `dateFilter`-memo der skærer dem ned baseret på `started_at` (sessions) før resten af de eksisterende memos (popular, dropoff, tagStats, durStats, avgSeconds) bruger listen. Views filtreres via `sessionIds` som i dag, så de følger automatisk med.
-
-3. **Visning**: Tæller og labels viser det valgte interval (fx "Sessioner (1.–4. juni)").
-
-## Hvad der *ikke* ændres
-
-- Ingen database-ændringer — kun frontend.
-- Limitten på 2000/5000 rækker bevares. Hvis du senere vil filtrere på datoer længere tilbage end de seneste 2000 sessioner, skal vi flytte filtreringen til selve Supabase-kaldet (`.gte("started_at", from).lte(...)`) — kan tilføjes hvis det bliver relevant.
-
-## Kort teknisk
-
-```ts
-const [from, setFrom] = useState<string>(/* 30 dage siden, YYYY-MM-DD */);
-const [to, setTo] = useState<string>(/* i dag */);
-
-const dateFilteredSessions = useMemo(() => {
-  const f = from ? new Date(from + "T00:00:00").getTime() : -Infinity;
-  const t = to ? new Date(to + "T23:59:59").getTime() : Infinity;
-  return sessions.filter(s => {
-    const ts = new Date(s.started_at).getTime();
-    return ts >= f && ts <= t;
-  });
-}, [sessions, from, to]);
-```
-
-Derefter bruges `dateFilteredSessions` i stedet for `sessions` i de eksisterende `locFilter`-memos.
+## Efter publish
+Når frontend er publiceret, kan tablets gå til samme `/app`-side og hente den nye APK. Eksisterende installation skal afinstalleres først hvis signaturen er ændret (debug-builds har samme debug-signatur, så normalt kan den bare installeres ovenpå).
