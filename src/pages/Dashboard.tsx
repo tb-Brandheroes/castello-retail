@@ -8,6 +8,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { getDeviceLocation, setDeviceLocation } from "@/lib/analytics";
 import { RECIPES } from "@/data/recipes";
 
 type Session = {
@@ -37,6 +41,19 @@ const Dashboard = () => {
   const [views, setViews] = useState<View[]>([]);
   const [locFilter, setLocFilter] = useState<string>("all");
   const [loading, setLoading] = useState(true);
+  const [deviceName, setDeviceName] = useState<string>(() => getDeviceLocation());
+  const [nameInput, setNameInput] = useState<string>(() => getDeviceLocation());
+
+  const saveDeviceName = () => {
+    const trimmed = nameInput.trim();
+    if (!trimmed) {
+      toast.error("Skriv et navn til denne skærm");
+      return;
+    }
+    setDeviceLocation(trimmed);
+    setDeviceName(trimmed);
+    toast.success(`Skærm gemt som "${trimmed}"`);
+  };
 
   useEffect(() => {
     document.title = "Castello Kiosk – Dashboard";
@@ -141,6 +158,30 @@ const Dashboard = () => {
             ))}
           </select>
         </header>
+
+        <Panel title="Denne skærms navn">
+          <p className="text-sm text-muted-foreground mb-3">
+            Sættes på selve tabletten ved opsætning. Gemmes lokalt og bruges som
+            lokation på alle sessioner og heartbeats fra denne enhed. Skriv fx
+            "Kvickly ved køl" eller "Kvickly ved indgang".
+          </p>
+          <div className="flex gap-2">
+            <Input
+              value={nameInput}
+              onChange={(e) => setNameInput(e.target.value)}
+              placeholder="Fx Kvickly ved køl"
+              onKeyDown={(e) => {
+                if (e.key === "Enter") saveDeviceName();
+              }}
+            />
+            <Button onClick={saveDeviceName}>Gem</Button>
+          </div>
+          {deviceName && (
+            <p className="text-xs mt-3 text-muted-foreground">
+              Nuværende: <strong className="text-foreground">{deviceName}</strong>
+            </p>
+          )}
+        </Panel>
 
         {loading ? (
           <p>Indlæser…</p>

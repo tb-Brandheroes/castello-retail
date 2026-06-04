@@ -109,9 +109,16 @@ export async function recoverOutboxFromIdb() {
 
 /* ---------------- Helpers ---------------- */
 
+const LOCATION_KEY = "castello.location";
+
 const getLocation = () => {
   if (location !== null) return location;
   try {
+    const stored = localStorage.getItem(LOCATION_KEY);
+    if (stored && stored.trim()) {
+      location = stored.trim();
+      return location;
+    }
     const params = new URLSearchParams(window.location.search);
     location = params.get("loc") || "unknown";
   } catch {
@@ -119,6 +126,25 @@ const getLocation = () => {
   }
   return location;
 };
+
+export function setDeviceLocation(name: string) {
+  const trimmed = name.trim();
+  if (!trimmed) return;
+  try {
+    localStorage.setItem(LOCATION_KEY, trimmed);
+  } catch {
+    /* ignore */
+  }
+  location = trimmed;
+}
+
+export function getDeviceLocation(): string {
+  try {
+    return localStorage.getItem(LOCATION_KEY) ?? "";
+  } catch {
+    return "";
+  }
+}
 
 const getTzOffset = () => {
   try {
