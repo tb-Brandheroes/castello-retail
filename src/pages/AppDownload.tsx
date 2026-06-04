@@ -1,5 +1,5 @@
 const APK_URL = "/downloads/castello-moments.apk";
-const APK_SIZE = "27 MB";
+const APK_SIZE = "28 MB";
 
 const AppDownload = () => {
   return (
