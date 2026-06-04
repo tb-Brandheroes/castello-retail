@@ -44,6 +44,35 @@ const Dashboard = () => {
   const [deviceName, setDeviceName] = useState<string>(() => getDeviceLocation());
   const [nameInput, setNameInput] = useState<string>(() => getDeviceLocation());
 
+  const toYmd = (d: Date) => {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
+  };
+  const today = new Date();
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(today.getDate() - 29);
+  const [fromDate, setFromDate] = useState<string>(toYmd(thirtyDaysAgo));
+  const [toDate, setToDate] = useState<string>(toYmd(today));
+
+  const setRange = (days: number | "all" | "today") => {
+    if (days === "all") {
+      setFromDate("");
+      setToDate("");
+      return;
+    }
+    const end = new Date();
+    const start = new Date();
+    if (days === "today") {
+      // same day
+    } else {
+      start.setDate(end.getDate() - (days - 1));
+    }
+    setFromDate(toYmd(start));
+    setToDate(toYmd(end));
+  };
+
   const saveDeviceName = () => {
     const trimmed = nameInput.trim();
     if (!trimmed) {
@@ -76,9 +105,21 @@ const Dashboard = () => {
     return ["all", ...Array.from(set).sort()];
   }, [sessions]);
 
+  const dateFilteredSessions = useMemo(() => {
+    const f = fromDate ? new Date(fromDate + "T00:00:00").getTime() : -Infinity;
+    const t = toDate ? new Date(toDate + "T23:59:59.999").getTime() : Infinity;
+    return sessions.filter((s) => {
+      const ts = new Date(s.started_at).getTime();
+      return ts >= f && ts <= t;
+    });
+  }, [sessions, fromDate, toDate]);
+
   const filteredSessions = useMemo(
-    () => (locFilter === "all" ? sessions : sessions.filter((s) => (s.location ?? "unknown") === locFilter)),
-    [sessions, locFilter],
+    () =>
+      locFilter === "all"
+        ? dateFilteredSessions
+        : dateFilteredSessions.filter((s) => (s.location ?? "unknown") === locFilter),
+    [dateFilteredSessions, locFilter],
   );
   const sessionIds = useMemo(() => new Set(filteredSessions.map((s) => s.id)), [filteredSessions]);
   const filteredViews = useMemo(() => views.filter((v) => sessionIds.has(v.session_id)), [views, sessionIds]);
@@ -146,17 +187,51 @@ const Dashboard = () => {
             <h1 className="text-3xl md:text-4xl font-semibold">Kiosk Dashboard</h1>
             <p className="text-muted-foreground mt-1">Brug af Castello opskrifts-kiosken</p>
           </div>
-          <select
-            value={locFilter}
-            onChange={(e) => setLocFilter(e.target.value)}
-            className="border rounded-md px-3 py-2 bg-card"
-          >
-            {locations.map((l) => (
-              <option key={l} value={l}>
-                {l === "all" ? "Alle lokationer" : l}
-              </option>
-            ))}
-          </select>
+          <div className="flex flex-wrap items-end gap-2">
+            <div className="flex flex-col">
+              <label className="text-xs text-muted-foreground mb-1">Fra</label>
+              <input
+                type="date"
+                value={fromDate}
+                onChange={(e) => setFromDate(e.target.value)}
+                className="border rounded-md px-2 py-2 bg-card text-sm"
+              />
+            </div>
+            <div className="flex flex-col">
+              <label className="text-xs text-muted-foreground mb-1">Til</label>
+              <input
+                type="date"
+                value={toDate}
+                onChange={(e) => setToDate(e.target.value)}
+                className="border rounded-md px-2 py-2 bg-card text-sm"
+              />
+            </div>
+            <div className="flex gap-1">
+              <Button variant="outline" size="sm" onClick={() => setRange("today")}>
+                I dag
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => setRange(7)}>
+                7 dage
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => setRange(30)}>
+                30 dage
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => setRange("all")}>
+                Alt
+              </Button>
+            </div>
+            <select
+              value={locFilter}
+              onChange={(e) => setLocFilter(e.target.value)}
+              className="border rounded-md px-3 py-2 bg-card"
+            >
+              {locations.map((l) => (
+                <option key={l} value={l}>
+                  {l === "all" ? "Alle lokationer" : l}
+                </option>
+              ))}
+            </select>
+          </div>
         </header>
 
         <Panel title="Denne skærms navn">
