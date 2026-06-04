@@ -105,9 +105,21 @@ const Dashboard = () => {
     return ["all", ...Array.from(set).sort()];
   }, [sessions]);
 
+  const dateFilteredSessions = useMemo(() => {
+    const f = fromDate ? new Date(fromDate + "T00:00:00").getTime() : -Infinity;
+    const t = toDate ? new Date(toDate + "T23:59:59.999").getTime() : Infinity;
+    return sessions.filter((s) => {
+      const ts = new Date(s.started_at).getTime();
+      return ts >= f && ts <= t;
+    });
+  }, [sessions, fromDate, toDate]);
+
   const filteredSessions = useMemo(
-    () => (locFilter === "all" ? sessions : sessions.filter((s) => (s.location ?? "unknown") === locFilter)),
-    [sessions, locFilter],
+    () =>
+      locFilter === "all"
+        ? dateFilteredSessions
+        : dateFilteredSessions.filter((s) => (s.location ?? "unknown") === locFilter),
+    [dateFilteredSessions, locFilter],
   );
   const sessionIds = useMemo(() => new Set(filteredSessions.map((s) => s.id)), [filteredSessions]);
   const filteredViews = useMemo(() => views.filter((v) => sessionIds.has(v.session_id)), [views, sessionIds]);
