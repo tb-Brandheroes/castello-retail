@@ -44,6 +44,35 @@ const Dashboard = () => {
   const [deviceName, setDeviceName] = useState<string>(() => getDeviceLocation());
   const [nameInput, setNameInput] = useState<string>(() => getDeviceLocation());
 
+  const toYmd = (d: Date) => {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
+  };
+  const today = new Date();
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(today.getDate() - 29);
+  const [fromDate, setFromDate] = useState<string>(toYmd(thirtyDaysAgo));
+  const [toDate, setToDate] = useState<string>(toYmd(today));
+
+  const setRange = (days: number | "all" | "today") => {
+    if (days === "all") {
+      setFromDate("");
+      setToDate("");
+      return;
+    }
+    const end = new Date();
+    const start = new Date();
+    if (days === "today") {
+      // same day
+    } else {
+      start.setDate(end.getDate() - (days - 1));
+    }
+    setFromDate(toYmd(start));
+    setToDate(toYmd(end));
+  };
+
   const saveDeviceName = () => {
     const trimmed = nameInput.trim();
     if (!trimmed) {
