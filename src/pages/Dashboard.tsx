@@ -159,7 +159,33 @@ const Dashboard = () => {
           </select>
         </header>
 
+        <Panel title="Denne skærms navn">
+          <p className="text-sm text-muted-foreground mb-3">
+            Sættes på selve tabletten ved opsætning. Gemmes lokalt og bruges som
+            lokation på alle sessioner og heartbeats fra denne enhed. Skriv fx
+            "Kvickly ved køl" eller "Kvickly ved indgang".
+          </p>
+          <div className="flex gap-2">
+            <Input
+              value={nameInput}
+              onChange={(e) => setNameInput(e.target.value)}
+              placeholder="Fx Kvickly ved køl"
+              onKeyDown={(e) => {
+                if (e.key === "Enter") saveDeviceName();
+              }}
+            />
+            <Button onClick={saveDeviceName}>Gem</Button>
+          </div>
+          {deviceName && (
+            <p className="text-xs mt-3 text-muted-foreground">
+              Nuværende: <strong className="text-foreground">{deviceName}</strong>
+            </p>
+          )}
+        </Panel>
+
         {loading ? (
+          <p>Indlæser…</p>
+        ) : (
           <p>Indlæser…</p>
         ) : (
           <>
