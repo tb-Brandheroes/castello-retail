@@ -186,8 +186,6 @@ const Dashboard = () => {
         {loading ? (
           <p>Indlæser…</p>
         ) : (
-          <p>Indlæser…</p>
-        ) : (
           <>
             <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <Stat label="Sessioner" value={total} />
