@@ -1,31 +1,88 @@
-## Goal
+# Identificering af tablets
 
-Make the attached `app-debug.apk` (27 MB) downloadable from the published site at the URL `/app`, so the tablet (or anyone) can install it straight from a browser.
+Mål: Hver tablet sender sit eget navn (fx "Kvickly ved køl") med al data, så dashboardet kan filtrere per skærm. Eksisterende data bevares — vi ændrer kun *hvordan* `location` udfyldes fremover.
 
-## What I'll do
+## Ingen data går tabt
 
-1. **Add the APK to `public/`**
-   - Save the file as `public/downloads/castello-moments.apk`
-   - Anything in `public/` is served as-is by Vite, so it will be reachable directly at `https://castello-retail.lovable.app/downloads/castello-moments.apk`.
+- Vi rører ikke databasen. `sessions.location`, `device_heartbeats.location` og rækker fra de sidste APK-builds (alle med `location = "unknown"`) bliver liggende.
+- Ingen migrations, ingen drops. Nye sessions fra opdaterede tablets får bare et rigtigt navn.
+- Capacitor's WebView bevarer localStorage på tværs af app-opdateringer, så når navnet først er sat på en tablet, overlever det fremtidige APK-installs (kun "Clear app data" eller afinstallation rydder det).
 
-2. **Create an `/app` route with a simple install page**
-   - New page `src/pages/AppDownload.tsx` styled to match the Castello look (Cormorant + Montserrat, existing color tokens).
-   - Content:
-     - Title "Install Castello Moments"
-     - Short instructions (enable "Install unknown apps" for the browser → tap Download → open the APK to install)
-     - Big download button linking to `/downloads/castello-moments.apk` with the `download` attribute
-     - Version + file size shown below the button
-   - Register the route `/app` in `src/App.tsx`.
+## Ændringer
 
-3. **No service worker caching of the APK**
-   - Add `downloads/*` to the PWA `globIgnores` (or simply leave it out of `globPatterns`) so the 27 MB file is not pulled into the offline cache and doesn't bloat the kiosk app.
+### 1. `src/lib/analytics.ts` — læs location fra localStorage
 
-4. **Verify**
-   - After publish, `https://castello-retail.lovable.app/app` shows the install page.
-   - `https://castello-retail.lovable.app/downloads/castello-moments.apk` downloads the APK directly (handy as a short link too).
+Erstat `getLocation()` så den bruger localStorage først, derefter `?loc=` (bagudkompatibel for web-preview), derefter `"unknown"`:
 
-## Notes
+```ts
+const LOCATION_KEY = "castello.location";
 
-- Lovable's static hosting will serve the `.apk` with a generic binary content-type, which is fine — Android recognizes it by extension and prompts to install.
-- If you'd like a shorter URL (e.g. `/castello.apk` at the root) I can add that too — just say the word.
-- Future APK updates: drop the new file in the same path and republish; the URL stays the same.
+const getLocation = () => {
+  if (location !== null) return location;
+  try {
+    const stored = localStorage.getItem(LOCATION_KEY);
+    if (stored && stored.trim()) {
+      location = stored.trim();
+      return location;
+    }
+    const params = new URLSearchParams(window.location.search);
+    location = params.get("loc") || "unknown";
+  } catch {
+    location = "unknown";
+  }
+  return location;
+};
+```
+
+Heartbeat bruger samme funktion → fixes automatisk.
+
+Eksportér også en lille helper så Dashboard kan opdatere det:
+
+```ts
+export function setDeviceLocation(name: string) {
+  const trimmed = name.trim();
+  if (!trimmed) return;
+  try { localStorage.setItem(LOCATION_KEY, trimmed); } catch {}
+  location = trimmed;
+}
+export function getDeviceLocation(): string {
+  try { return localStorage.getItem(LOCATION_KEY) ?? ""; } catch { return ""; }
+}
+```
+
+### 2. `src/pages/Dashboard.tsx` — input til at navngive *denne* tablet
+
+Tilføj et lille kort øverst på dashboardet: viser nuværende navn for *denne enhed* + input + "Gem"-knap. Workflowet bliver: ved opsætning åbner man `/dashboard` på selve tabletten, skriver navnet, gemmer. Derefter bruges tabletten normalt.
+
+```tsx
+// Øverst i dashboardet
+<Panel title="Denne skærms navn">
+  <p className="text-sm text-muted-foreground mb-2">
+    Sættes på selve tabletten ved opsætning. Gemmes lokalt og bruges som "location"
+    på alle sessioner fra denne enhed.
+  </p>
+  <div className="flex gap-2">
+    <Input value={name} onChange={(e) => setName(e.target.value)}
+      placeholder="Fx Kvickly ved køl" />
+    <Button onClick={save}>Gem</Button>
+  </div>
+  {current && <p className="text-xs mt-2">Nuværende: <strong>{current}</strong></p>}
+</Panel>
+```
+
+`save` kalder `setDeviceLocation(name)` og viser en toast. Navnet ligger så i location-filteret i dropdownen som det allerede er bygget.
+
+### 3. Skjult adgang (anbefalet, lille tilføjelse)
+
+I `src/pages/Index.tsx`: long-press (3 sek) på Castello-logoet → `navigate("/dashboard")`. Lige nu er `/dashboard` kun beskyttet af at kunder ikke kan skrive URL i kiosk-mode, men long-press giver dig en eksplicit vej ind når du står ved tabletten.
+
+## Hvad du gør efter deploy
+
+1. Byg ny APK (eller hot-reload hvis wrapperen peger på Lovable preview), installer på hver tablet.
+2. På hver tablet: åbn `/dashboard` (long-press logo), skriv navnet, tryk Gem.
+3. Fra det øjeblik tagges al ny data med det navn. Dashboard-dropdownen viser de 3 navne (+ "unknown" for historisk data).
+
+## Hvad der *ikke* løses her
+
+- Gammel data (42 sessions med `location = "unknown"`) forbliver "unknown" — kan ikke retroaktivt tildeles en skærm.
+- Hvis nogen klikker "Clear app data" eller afinstallerer, skal navnet sættes igen.
