@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Table,
@@ -184,6 +186,12 @@ const Dashboard = () => {
       <div className="max-w-6xl mx-auto space-y-8">
         <header className="flex flex-wrap items-end gap-4 justify-between">
           <div>
+            <Link
+              to="/"
+              className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground text-sm mb-2"
+            >
+              <ArrowLeft className="h-4 w-4" /> Tilbage til appen
+            </Link>
             <h1 className="text-3xl md:text-4xl font-semibold">Kiosk Dashboard</h1>
             <p className="text-muted-foreground mt-1">Brug af Castello opskrifts-kiosken</p>
           </div>
