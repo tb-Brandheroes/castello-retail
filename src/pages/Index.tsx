@@ -41,6 +41,27 @@ const Index = () => {
 
   useWakeLock();
 
+  const navigate = useNavigate();
+  const [logoPressing, setLogoPressing] = useState(false);
+  const logoPressTimer = useRef<number | null>(null);
+
+  const startLogoPress = () => {
+    if (logoPressTimer.current) window.clearTimeout(logoPressTimer.current);
+    setLogoPressing(true);
+    logoPressTimer.current = window.setTimeout(() => {
+      setLogoPressing(false);
+      navigate("/dashboard");
+    }, 3000);
+  };
+
+  const cancelLogoPress = () => {
+    if (logoPressTimer.current) {
+      window.clearTimeout(logoPressTimer.current);
+      logoPressTimer.current = null;
+    }
+    setLogoPressing(false);
+  };
+
 
 
 
