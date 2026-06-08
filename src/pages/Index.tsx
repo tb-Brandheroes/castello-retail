@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { X, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
