@@ -183,7 +183,7 @@ const Index = () => {
                 userSelect: "none",
                 filter:
                   "drop-shadow(0 2px 4px rgba(74, 30, 45, 0.35)) drop-shadow(0 1px 2px rgba(74, 30, 45, 0.25))",
-              } as React.CSSProperties}
+              } as Record<string, string>}
             />
           </div>
         </footer>
