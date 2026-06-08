@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { X, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -40,6 +40,20 @@ const Index = () => {
   const [selected, setSelected] = useState<Recipe | null>(null);
 
   useWakeLock();
+
+  const navigate = useNavigate();
+  const logoTapsRef = useRef<number[]>([]);
+
+  const handleLogoTap = () => {
+    const now = Date.now();
+    // keep only taps within the last 800ms
+    logoTapsRef.current = logoTapsRef.current.filter((t) => now - t < 800);
+    logoTapsRef.current.push(now);
+    if (logoTapsRef.current.length >= 3) {
+      logoTapsRef.current = [];
+      navigate("/dashboard");
+    }
+  };
 
 
 
@@ -133,15 +147,34 @@ const Index = () => {
         )}
 
         <footer className="text-center mt-auto pt-8 pb-16 md:pb-24">
-          <img
-            src="/lovable-uploads/6ed48fd3-10f2-4811-bcdd-035cfbf810b8.png"
-            alt="House of Castello"
-            className="h-40 md:h-44 mx-auto opacity-95"
+          <div
+            role="button"
+            aria-label="Castello"
+            onClick={handleLogoTap}
+            onContextMenu={(e) => e.preventDefault()}
+            className="inline-block select-none cursor-default"
             style={{
-              filter:
-                "drop-shadow(0 2px 4px rgba(74, 30, 45, 0.35)) drop-shadow(0 1px 2px rgba(74, 30, 45, 0.25))",
+              touchAction: "manipulation",
+              WebkitUserSelect: "none",
+              WebkitTouchCallout: "none",
             }}
-          />
+          >
+            <img
+              src="/lovable-uploads/6ed48fd3-10f2-4811-bcdd-035cfbf810b8.png"
+              alt="House of Castello"
+              draggable={false}
+              className="h-40 md:h-44 mx-auto opacity-95"
+              style={{
+                pointerEvents: "none",
+                WebkitUserSelect: "none",
+                WebkitTouchCallout: "none",
+                WebkitUserDrag: "none",
+                userSelect: "none",
+                filter:
+                  "drop-shadow(0 2px 4px rgba(74, 30, 45, 0.35)) drop-shadow(0 1px 2px rgba(74, 30, 45, 0.25))",
+              } as Record<string, string>}
+            />
+          </div>
         </footer>
       </main>
     </div>
