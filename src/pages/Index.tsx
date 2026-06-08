@@ -157,8 +157,18 @@ const Index = () => {
           <img
             src="/lovable-uploads/6ed48fd3-10f2-4811-bcdd-035cfbf810b8.png"
             alt="House of Castello"
-            className="h-40 md:h-44 mx-auto opacity-95"
+            draggable={false}
+            onPointerDown={startLogoPress}
+            onPointerUp={cancelLogoPress}
+            onPointerLeave={cancelLogoPress}
+            onPointerCancel={cancelLogoPress}
+            onContextMenu={(e) => e.preventDefault()}
+            className="h-40 md:h-44 mx-auto select-none transition-opacity duration-300"
             style={{
+              opacity: logoPressing ? 0.6 : 0.95,
+              touchAction: "none",
+              WebkitUserSelect: "none",
+              WebkitTouchCallout: "none",
               filter:
                 "drop-shadow(0 2px 4px rgba(74, 30, 45, 0.35)) drop-shadow(0 1px 2px rgba(74, 30, 45, 0.25))",
             }}
