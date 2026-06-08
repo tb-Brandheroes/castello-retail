@@ -150,15 +150,11 @@ const Index = () => {
           <div
             role="button"
             aria-label="Castello"
-            onPointerDown={startLogoPress}
-            onPointerUp={cancelLogoPress}
-            onPointerLeave={cancelLogoPress}
-            onPointerCancel={cancelLogoPress}
+            onClick={handleLogoTap}
             onContextMenu={(e) => e.preventDefault()}
-            className="inline-block select-none transition-opacity duration-300"
+            className="inline-block select-none cursor-default"
             style={{
-              opacity: logoPressing ? 0.6 : 0.95,
-              touchAction: "none",
+              touchAction: "manipulation",
               WebkitUserSelect: "none",
               WebkitTouchCallout: "none",
             }}
@@ -167,7 +163,7 @@ const Index = () => {
               src="/lovable-uploads/6ed48fd3-10f2-4811-bcdd-035cfbf810b8.png"
               alt="House of Castello"
               draggable={false}
-              className="h-40 md:h-44 mx-auto"
+              className="h-40 md:h-44 mx-auto opacity-95"
               style={{
                 pointerEvents: "none",
                 WebkitUserSelect: "none",
