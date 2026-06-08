@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { Link, useNavigate } from "react-router-dom";
 import { X, ArrowLeft } from "lucide-react";
