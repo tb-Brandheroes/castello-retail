@@ -154,25 +154,38 @@ const Index = () => {
         )}
 
         <footer className="text-center mt-auto pt-8 pb-16 md:pb-24">
-          <img
-            src="/lovable-uploads/6ed48fd3-10f2-4811-bcdd-035cfbf810b8.png"
-            alt="House of Castello"
-            draggable={false}
+          <div
+            role="button"
+            aria-label="Castello"
             onPointerDown={startLogoPress}
             onPointerUp={cancelLogoPress}
             onPointerLeave={cancelLogoPress}
             onPointerCancel={cancelLogoPress}
             onContextMenu={(e) => e.preventDefault()}
-            className="h-40 md:h-44 mx-auto select-none transition-opacity duration-300"
+            className="inline-block select-none transition-opacity duration-300"
             style={{
               opacity: logoPressing ? 0.6 : 0.95,
               touchAction: "none",
               WebkitUserSelect: "none",
               WebkitTouchCallout: "none",
-              filter:
-                "drop-shadow(0 2px 4px rgba(74, 30, 45, 0.35)) drop-shadow(0 1px 2px rgba(74, 30, 45, 0.25))",
             }}
-          />
+          >
+            <img
+              src="/lovable-uploads/6ed48fd3-10f2-4811-bcdd-035cfbf810b8.png"
+              alt="House of Castello"
+              draggable={false}
+              className="h-40 md:h-44 mx-auto"
+              style={{
+                pointerEvents: "none",
+                WebkitUserSelect: "none",
+                WebkitTouchCallout: "none",
+                WebkitUserDrag: "none",
+                userSelect: "none",
+                filter:
+                  "drop-shadow(0 2px 4px rgba(74, 30, 45, 0.35)) drop-shadow(0 1px 2px rgba(74, 30, 45, 0.25))",
+              } as Record<string, string>}
+            />
+          </div>
         </footer>
       </main>
     </div>
