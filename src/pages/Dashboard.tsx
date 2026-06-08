@@ -88,14 +88,35 @@ const Dashboard = () => {
 
   useEffect(() => {
     document.title = "Castello Kiosk – Dashboard";
+    const fetchAll = async <T,>(
+      table: "sessions" | "recipe_views",
+      orderCol: string,
+    ): Promise<T[]> => {
+      const pageSize = 1000;
+      let from = 0;
+      const all: T[] = [];
+      while (true) {
+        const { data, error } = await supabase
+          .from(table)
+          .select("*")
+          .order(orderCol, { ascending: false })
+          .range(from, from + pageSize - 1);
+        if (error || !data) break;
+        all.push(...(data as T[]));
+        if (data.length < pageSize) break;
+        from += pageSize;
+        if (all.length >= 50000) break;
+      }
+      return all;
+    };
     const load = async () => {
       setLoading(true);
       const [s, v] = await Promise.all([
-        supabase.from("sessions").select("*").order("started_at", { ascending: false }).limit(2000),
-        supabase.from("recipe_views").select("*").order("created_at", { ascending: false }).limit(5000),
+        fetchAll<Session>("sessions", "started_at"),
+        fetchAll<View>("recipe_views", "created_at"),
       ]);
-      setSessions((s.data as Session[]) ?? []);
-      setViews((v.data as View[]) ?? []);
+      setSessions(s);
+      setViews(v);
       setLoading(false);
     };
     load();
