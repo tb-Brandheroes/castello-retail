@@ -42,24 +42,17 @@ const Index = () => {
   useWakeLock();
 
   const navigate = useNavigate();
-  const [logoPressing, setLogoPressing] = useState(false);
-  const logoPressTimer = useRef<number | null>(null);
+  const logoTapsRef = useRef<number[]>([]);
 
-  const startLogoPress = () => {
-    if (logoPressTimer.current) window.clearTimeout(logoPressTimer.current);
-    setLogoPressing(true);
-    logoPressTimer.current = window.setTimeout(() => {
-      setLogoPressing(false);
+  const handleLogoTap = () => {
+    const now = Date.now();
+    // keep only taps within the last 800ms
+    logoTapsRef.current = logoTapsRef.current.filter((t) => now - t < 800);
+    logoTapsRef.current.push(now);
+    if (logoTapsRef.current.length >= 3) {
+      logoTapsRef.current = [];
       navigate("/dashboard");
-    }, 3000);
-  };
-
-  const cancelLogoPress = () => {
-    if (logoPressTimer.current) {
-      window.clearTimeout(logoPressTimer.current);
-      logoPressTimer.current = null;
     }
-    setLogoPressing(false);
   };
 
 
