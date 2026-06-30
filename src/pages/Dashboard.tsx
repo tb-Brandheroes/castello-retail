@@ -288,6 +288,10 @@ const Dashboard = () => {
           )}
         </Panel>
 
+        <LiveActivity locationFilter={locFilter} />
+
+
+
         {loading ? (
           <p>Indlæser…</p>
         ) : (
