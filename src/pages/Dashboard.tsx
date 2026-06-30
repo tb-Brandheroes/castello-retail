@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { getDeviceLocation, setDeviceLocation } from "@/lib/analytics";
 import { RECIPES } from "@/data/recipes";
+import { LiveActivity } from "@/components/LiveActivity";
 
 type Session = {
   id: string;
@@ -286,6 +287,10 @@ const Dashboard = () => {
             </p>
           )}
         </Panel>
+
+        <LiveActivity locationFilter={locFilter} />
+
+
 
         {loading ? (
           <p>Indlæser…</p>
