@@ -265,6 +265,16 @@ const Dashboard = () => {
             >
               <ArrowLeft className="h-4 w-4" /> Tilbage til appen
             </Link>
+            <button
+              onClick={() => {
+                clearAdminCode();
+                setAuthed(false);
+              }}
+              className="ml-4 text-sm text-muted-foreground hover:text-foreground underline"
+            >
+              Log ud
+            </button>
+
             <h1 className="text-3xl md:text-4xl font-semibold">Kiosk Dashboard</h1>
             <p className="text-muted-foreground mt-1">Brug af Castello opskrifts-kiosken</p>
           </div>
