@@ -1,0 +1,1 @@
+REVOKE ALL ON FUNCTION public.sessions_guard_update() FROM PUBLIC, anon, authenticated;
