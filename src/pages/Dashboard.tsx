@@ -89,39 +89,29 @@ const Dashboard = () => {
 
   useEffect(() => {
     document.title = "Castello Kiosk – Dashboard";
-    const fetchAll = async <T,>(
-      table: "sessions" | "recipe_views",
-      orderCol: string,
-    ): Promise<T[]> => {
-      const pageSize = 1000;
-      let from = 0;
-      const all: T[] = [];
-      while (true) {
-        const { data, error } = await supabase
-          .from(table)
-          .select("*")
-          .order(orderCol, { ascending: false })
-          .range(from, from + pageSize - 1);
-        if (error || !data) break;
-        all.push(...(data as T[]));
-        if (data.length < pageSize) break;
-        from += pageSize;
-        if (all.length >= 50000) break;
-      }
-      return all;
-    };
+    if (!authed) return;
     const load = async () => {
       setLoading(true);
-      const [s, v] = await Promise.all([
-        fetchAll<Session>("sessions", "started_at"),
-        fetchAll<View>("recipe_views", "created_at"),
-      ]);
-      setSessions(s);
-      setViews(v);
+      try {
+        const [s, v] = await Promise.all([
+          fetchAnalytics<Session>("sessions"),
+          fetchAnalytics<View>("recipe_views"),
+        ]);
+        setSessions(s);
+        setViews(v);
+      } catch (e) {
+        if (e instanceof AdminAuthError) {
+          setAuthed(false);
+          toast.error("Ugyldig kode - log ind igen");
+        } else {
+          toast.error("Kunne ikke hente data");
+        }
+      }
       setLoading(false);
     };
     load();
-  }, []);
+  }, [authed]);
+
 
   const locations = useMemo(() => {
     const set = new Set<string>();
