@@ -203,7 +203,58 @@ const Dashboard = () => {
     return Math.round(sum / completedSessions.length / 1000);
   }, [filteredSessions]);
 
+  if (!authed) {
+    return (
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-6">
+        <div className="w-full max-w-sm bg-card border rounded-lg p-6 space-y-4">
+          <div>
+            <h1 className="text-2xl font-semibold">Kiosk Dashboard</h1>
+            <p className="text-muted-foreground text-sm mt-1">
+              Indtast adgangskoden for at se data.
+            </p>
+          </div>
+          <Input
+            type="password"
+            inputMode="numeric"
+            autoFocus
+            placeholder="Adgangskode"
+            value={codeInput}
+            onChange={(e) => setCodeInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                setAdminCode(codeInput);
+                setCodeInput("");
+                setAuthed(true);
+              }
+            }}
+          />
+          <Button
+            className="w-full"
+            onClick={() => {
+              if (!codeInput.trim()) {
+                toast.error("Skriv adgangskoden");
+                return;
+              }
+              setAdminCode(codeInput);
+              setCodeInput("");
+              setAuthed(true);
+            }}
+          >
+            Log ind
+          </Button>
+          <Link
+            to="/"
+            className="block text-center text-sm text-muted-foreground hover:text-foreground"
+          >
+            Tilbage til appen
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   return (
+
     <div className="min-h-screen bg-background text-foreground p-6 md:p-10">
       <div className="max-w-6xl mx-auto space-y-8">
         <header className="flex flex-wrap items-end gap-4 justify-between">
