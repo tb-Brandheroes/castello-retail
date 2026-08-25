@@ -53,6 +53,9 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [deviceName, setDeviceName] = useState<string>(() => getDeviceLocation());
   const [nameInput, setNameInput] = useState<string>(() => getDeviceLocation());
+  const [authed, setAuthed] = useState<boolean>(() => Boolean(getAdminCode()));
+  const [codeInput, setCodeInput] = useState("");
+
 
   const toYmd = (d: Date) => {
     const y = d.getFullYear();
