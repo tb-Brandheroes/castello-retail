@@ -1,7 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import {
+  AdminAuthError,
+  fetchAnalytics,
+  getAdminCode,
+  setAdminCode,
+  clearAdminCode,
+} from "@/lib/adminApi";
+
 import {
   Table,
   TableBody,
