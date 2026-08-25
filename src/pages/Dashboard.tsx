@@ -1,7 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import {
+  AdminAuthError,
+  fetchAnalytics,
+  getAdminCode,
+  setAdminCode,
+  clearAdminCode,
+} from "@/lib/adminApi";
+
 import {
   Table,
   TableBody,
@@ -46,6 +53,9 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [deviceName, setDeviceName] = useState<string>(() => getDeviceLocation());
   const [nameInput, setNameInput] = useState<string>(() => getDeviceLocation());
+  const [authed, setAuthed] = useState<boolean>(() => Boolean(getAdminCode()));
+  const [codeInput, setCodeInput] = useState("");
+
 
   const toYmd = (d: Date) => {
     const y = d.getFullYear();
@@ -89,39 +99,29 @@ const Dashboard = () => {
 
   useEffect(() => {
     document.title = "Castello Kiosk – Dashboard";
-    const fetchAll = async <T,>(
-      table: "sessions" | "recipe_views",
-      orderCol: string,
-    ): Promise<T[]> => {
-      const pageSize = 1000;
-      let from = 0;
-      const all: T[] = [];
-      while (true) {
-        const { data, error } = await supabase
-          .from(table)
-          .select("*")
-          .order(orderCol, { ascending: false })
-          .range(from, from + pageSize - 1);
-        if (error || !data) break;
-        all.push(...(data as T[]));
-        if (data.length < pageSize) break;
-        from += pageSize;
-        if (all.length >= 50000) break;
-      }
-      return all;
-    };
+    if (!authed) return;
     const load = async () => {
       setLoading(true);
-      const [s, v] = await Promise.all([
-        fetchAll<Session>("sessions", "started_at"),
-        fetchAll<View>("recipe_views", "created_at"),
-      ]);
-      setSessions(s);
-      setViews(v);
+      try {
+        const [s, v] = await Promise.all([
+          fetchAnalytics<Session>("sessions"),
+          fetchAnalytics<View>("recipe_views"),
+        ]);
+        setSessions(s);
+        setViews(v);
+      } catch (e) {
+        if (e instanceof AdminAuthError) {
+          setAuthed(false);
+          toast.error("Ugyldig kode - log ind igen");
+        } else {
+          toast.error("Kunne ikke hente data");
+        }
+      }
       setLoading(false);
     };
     load();
-  }, []);
+  }, [authed]);
+
 
   const locations = useMemo(() => {
     const set = new Set<string>();
@@ -203,7 +203,58 @@ const Dashboard = () => {
     return Math.round(sum / completedSessions.length / 1000);
   }, [filteredSessions]);
 
+  if (!authed) {
+    return (
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-6">
+        <div className="w-full max-w-sm bg-card border rounded-lg p-6 space-y-4">
+          <div>
+            <h1 className="text-2xl font-semibold">Kiosk Dashboard</h1>
+            <p className="text-muted-foreground text-sm mt-1">
+              Indtast adgangskoden for at se data.
+            </p>
+          </div>
+          <Input
+            type="password"
+            inputMode="numeric"
+            autoFocus
+            placeholder="Adgangskode"
+            value={codeInput}
+            onChange={(e) => setCodeInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                setAdminCode(codeInput);
+                setCodeInput("");
+                setAuthed(true);
+              }
+            }}
+          />
+          <Button
+            className="w-full"
+            onClick={() => {
+              if (!codeInput.trim()) {
+                toast.error("Skriv adgangskoden");
+                return;
+              }
+              setAdminCode(codeInput);
+              setCodeInput("");
+              setAuthed(true);
+            }}
+          >
+            Log ind
+          </Button>
+          <Link
+            to="/"
+            className="block text-center text-sm text-muted-foreground hover:text-foreground"
+          >
+            Tilbage til appen
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   return (
+
     <div className="min-h-screen bg-background text-foreground p-6 md:p-10">
       <div className="max-w-6xl mx-auto space-y-8">
         <header className="flex flex-wrap items-end gap-4 justify-between">
@@ -214,6 +265,16 @@ const Dashboard = () => {
             >
               <ArrowLeft className="h-4 w-4" /> Tilbage til appen
             </Link>
+            <button
+              onClick={() => {
+                clearAdminCode();
+                setAuthed(false);
+              }}
+              className="ml-4 text-sm text-muted-foreground hover:text-foreground underline"
+            >
+              Log ud
+            </button>
+
             <h1 className="text-3xl md:text-4xl font-semibold">Kiosk Dashboard</h1>
             <p className="text-muted-foreground mt-1">Brug af Castello opskrifts-kiosken</p>
           </div>
