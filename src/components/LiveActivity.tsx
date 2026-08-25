@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchAnalytics } from "@/lib/adminApi";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { RECIPES } from "@/data/recipes";
@@ -81,26 +81,22 @@ export const LiveActivity = ({ locationFilter }: Props) => {
   };
 
   const fetchAll = async () => {
-    const [s, v, h] = await Promise.all([
-      supabase
-        .from("sessions")
-        .select("id, location, started_at, ended_at, completed, picked_slug")
-        .order("started_at", { ascending: false })
-        .limit(PAGE),
-      supabase
-        .from("recipe_views")
-        .select("id, session_id, recipe_slug, picked, created_at")
-        .order("created_at", { ascending: false })
-        .limit(PAGE),
-      supabase
-        .from("device_heartbeats")
-        .select("id, location, app_version, created_at")
-        .order("created_at", { ascending: false })
-        .limit(PAGE),
-    ]);
+    let s: any[] = [];
+    let v: any[] = [];
+    let h: any[] = [];
+    try {
+      [s, v, h] = await Promise.all([
+        fetchAnalytics<any>("sessions", { limit: PAGE }),
+        fetchAnalytics<any>("recipe_views", { limit: PAGE }),
+        fetchAnalytics<any>("device_heartbeats", { limit: PAGE }),
+      ]);
+    } catch {
+      setLoading(false);
+      return;
+    }
 
     const evs: ActivityEvent[] = [];
-    (s.data ?? []).forEach((row: any) => {
+    s.forEach((row: any) => {
       evs.push({
         id: `s-start-${row.id}`,
         ts: row.started_at,
@@ -120,7 +116,7 @@ export const LiveActivity = ({ locationFilter }: Props) => {
         });
       }
     });
-    (v.data ?? []).forEach((row: any) => {
+    v.forEach((row: any) => {
       evs.push({
         id: `v-${row.id}`,
         ts: row.created_at,
@@ -129,7 +125,7 @@ export const LiveActivity = ({ locationFilter }: Props) => {
         description: slugToName.get(row.recipe_slug) ?? row.recipe_slug,
       });
     });
-    (h.data ?? []).forEach((row: any) => {
+    h.forEach((row: any) => {
       evs.push({
         id: `h-${row.id}`,
         ts: row.created_at,
@@ -148,86 +144,10 @@ export const LiveActivity = ({ locationFilter }: Props) => {
     const poll = window.setInterval(() => void fetchAll(), 10_000);
     const tick = window.setInterval(() => setNow(Date.now()), 1000);
 
-    const channel = supabase
-      .channel("dashboard-live-activity")
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "sessions" },
-        (payload) => {
-          const row: any = payload.new;
-          merge([
-            {
-              id: `s-start-${row.id}`,
-              ts: row.started_at,
-              kind: "session_start",
-              location: row.location,
-              description: "Bruger startede en session",
-            },
-          ]);
-          setLastFetched(Date.now());
-        },
-      )
-      .on(
-        "postgres_changes",
-        { event: "UPDATE", schema: "public", table: "sessions" },
-        (payload) => {
-          const row: any = payload.new;
-          if (row.completed && row.ended_at) {
-            merge([
-              {
-                id: `s-done-${row.id}`,
-                ts: row.ended_at,
-                kind: "session_complete",
-                location: row.location,
-                description: row.picked_slug
-                  ? `Valgte ${slugToName.get(row.picked_slug) ?? row.picked_slug}`
-                  : "Gennemførte session",
-              },
-            ]);
-            setLastFetched(Date.now());
-          }
-        },
-      )
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "recipe_views" },
-        (payload) => {
-          const row: any = payload.new;
-          merge([
-            {
-              id: `v-${row.id}`,
-              ts: row.created_at,
-              kind: row.picked ? "recipe_picked" : "recipe_shown",
-              location: null,
-              description: slugToName.get(row.recipe_slug) ?? row.recipe_slug,
-            },
-          ]);
-          setLastFetched(Date.now());
-        },
-      )
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "device_heartbeats" },
-        (payload) => {
-          const row: any = payload.new;
-          merge([
-            {
-              id: `h-${row.id}`,
-              ts: row.created_at,
-              kind: "heartbeat",
-              location: row.location,
-              description: `App ${row.app_version ?? "?"}`,
-            },
-          ]);
-          setLastFetched(Date.now());
-        },
-      )
-      .subscribe();
 
     return () => {
       window.clearInterval(poll);
       window.clearInterval(tick);
-      supabase.removeChannel(channel);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
